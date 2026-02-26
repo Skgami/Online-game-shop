@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login & Register - Online Game Shop</title>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Oxanium:wght@400;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Oxanium', sans-serif; }
+        body { background: #0f172a; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: white; padding: 20px; }
+        .container { background: #1e293b; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 100%; max-width: 400px; text-align: center; border: 2px solid #f43f5e; }
+        h2 { margin-bottom: 25px; color: #f43f5e; text-transform: uppercase; letter-spacing: 2px; }
+        input { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: none; background: #334155; color: white; outline: none; }
+        button { width: 100%; padding: 12px; border-radius: 8px; border: none; background: #f43f5e; color: white; font-weight: bold; cursor: pointer; transition: 0.3s; margin-bottom: 10px; }
+        button:hover { background: #e11d48; transform: scale(1.02); }
+        .toggle-text { font-size: 13px; color: #94a3b8; cursor: pointer; }
+        .toggle-text b { color: #38bdf8; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2 id="form-title">Login</h2>
+    <input type="email" id="email" placeholder="Email Address">
+    <input type="password" id="password" placeholder="Password">
+    <button id="main-btn" onclick="handleAuth()">Login Now</button>
+    <p class="toggle-text" onclick="toggleForm()">Don't have an account? <b id="toggle-link">Register</b></p>
+</div>
+
+<script>
+    // আপনার Firebase কনফিগারেশন
+    const firebaseConfig = {
+        apiKey: "AIzaSyBx8h5PYxI34ZTaHs9ScdA8puSBt6h8yYU",
+        authDomain: "panelshop-71ed8.firebaseapp.com",
+        projectId: "panelshop-71ed8",
+        storageBucket: "panelshop-71ed8.firebasestorage.app",
+        messagingSenderId: "741029675696",
+        appId: "1:741029675696:web:86331dc6ab82551d86f175"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    let isLogin = true;
+
+    function toggleForm() {
+        isLogin = !isLogin;
+        document.getElementById('form-title').innerText = isLogin ? 'Login' : 'Register';
+        document.getElementById('main-btn').innerText = isLogin ? 'Login Now' : 'Register Now';
+        document.getElementById('toggle-link').innerText = isLogin ? 'Register' : 'Login';
+    }
+
+    function handleAuth() {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        if(!email || !password) return alert("Please fill all fields!");
+
+        if (isLogin) {
+            auth.signInWithEmailAndPassword(email, password)
+                .then(() => window.location.href = 'index.html')
+                .catch(err => alert(err.message));
+        } else {
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((res) => {
+                    db.collection("users").doc(res.user.uid).set({
+                        email: email,
+                        balance: 0,
+                        role: 'user'
+                    }).then(() => window.location.href = 'index.html');
+                })
+                .catch(err => alert(err.message));
+        }
+    }
+</script>
+</body>
+</html>
