@@ -3,36 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Account - Panel Shop</title>
+    <title>My Account - Best Panel Shop</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Oxanium:wght@400;700&display=swap');
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Oxanium', sans-serif; }
-        body { background: #f8fafc; padding: 20px; text-align: center; }
-        .profile-card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-top: 50px; }
-        .profile-img { width: 80px; height: 80px; background: #f43f5e; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; margin: 0 auto 15px; }
-        h2 { color: #1e293b; margin-bottom: 5px; font-size: 18px; }
-        .info-row { display: flex; justify-content: space-between; padding: 15px 0; border-top: 1px solid #f1f5f9; font-weight: bold; }
-        .logout-btn { background: #f43f5e; color: white; padding: 12px; border-radius: 10px; border: none; width: 100%; margin-top: 20px; cursor: pointer; }
-        .bottom-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 12px; border-top: 1px solid #ddd; }
-        .nav-link { text-align: center; font-size: 11px; color: #64748b; text-decoration: none; }
+        body { background: #f1f5f9; color: #333; padding-bottom: 80px; }
+
+        /* Profile Header */
+        .profile-header { background: #1e293b; color: white; padding: 40px 20px; text-align: center; border-radius: 0 0 30px 30px; }
+        .user-icon { width: 80px; height: 80px; background: #f43f5e; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 35px; margin: 0 auto 15px; border: 4px solid rgba(255,255,255,0.2); }
+        .user-email { font-size: 16px; font-weight: bold; margin-bottom: 5px; }
+
+        /* Stats Card */
+        .stats-container { margin: -30px 20px 20px; background: white; border-radius: 15px; padding: 20px; display: flex; justify-content: space-around; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .stat-box { text-align: center; }
+        .stat-value { display: block; font-size: 18px; font-weight: 800; color: #f43f5e; }
+        .stat-label { font-size: 12px; color: #64748b; font-weight: bold; }
+
+        /* Menu List */
+        .menu-list { margin: 0 20px; background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .menu-item { display: flex; align-items: center; padding: 15px 20px; text-decoration: none; color: #1e293b; border-bottom: 1px solid #f1f5f9; font-weight: 600; font-size: 14px; transition: 0.3s; }
+        .menu-item:last-child { border-bottom: none; }
+        .menu-item:active { background: #f8fafc; }
+        .menu-icon { margin-right: 15px; font-size: 18px; }
+
+        .logout-btn { margin: 25px 20px; background: #fee2e2; color: #ef4444; text-align: center; padding: 15px; border-radius: 12px; font-weight: 800; cursor: pointer; border: none; width: calc(100% - 40px); }
+
+        /* Bottom Menu */
+        .bottom-bar { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 12px 5px; border-top: 1px solid #e2e8f0; }
+        .nav-link { text-align: center; font-size: 10px; color: #64748b; text-decoration: none; font-weight: 600; }
     </style>
 </head>
 <body>
-    <div class="profile-card">
-        <div class="profile-img">👤</div>
-        <h2 id="u-email">Loading...</h2>
-        <div class="info-row"><span>My Balance:</span><span style="color:#22c55e">৳ <span id="u-balance">0</span></span></div>
-        <button class="logout-btn" onclick="auth.signOut().then(()=>window.location.href='login.html')">Logout</button>
+
+    <div class="profile-header">
+        <div class="user-icon">👤</div>
+        <div class="user-email" id="email-display">Loading...</div>
+        <div style="font-size: 12px; opacity: 0.7;">Verified Member</div>
     </div>
+
+    <div class="stats-container">
+        <div class="stat-box">
+            <span class="stat-value">৳ <span id="balance-display">0</span></span>
+            <span class="stat-label">Wallet Balance</span>
+        </div>
+        <div class="stat-box">
+            <span class="stat-value">৳ <span id="spent-display">0</span></span>
+            <span class="stat-label">Total Spent</span>
+        </div>
+    </div>
+
+    <div class="menu-list">
+        <a href="add-money.html" class="menu-item"><span class="menu-icon">💳</span> Add Funds</a>
+        <a href="shop.html" class="menu-item"><span class="menu-icon">🛍️</span> Shop Now</a>
+        <a href="my-orders.html" class="menu-item"><span class="menu-icon">📦</span> My Orders</a>
+        <a href="https://wa.me/YOUR_NUMBER" class="menu-item"><span class="menu-icon">🎧</span> Support Center</a>
+    </div>
+
+    <button class="logout-btn" onclick="logoutUser()">LOGOUT ACCOUNT</button>
+
     <div class="bottom-bar">
         <a href="index.html" class="nav-link">🏠<br>Home</a>
         <a href="add-money.html" class="nav-link">💳<br>Add Fund</a>
-        <a href="dashboard.html" class="nav-link">👤<br>Account</a>
+        <a href="#" class="nav-link" onclick="alert('Coming Soon')">🎁<br>My Codes</a>
+        <a href="dashboard.html" class="nav-link" style="color: #f43f5e;">👤<br>Account</a>
     </div>
+
     <script>
+        // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyBx8h5PYxI34ZTaHs9ScdA8puSBt6h8yYU",
             authDomain: "panelshop-71ed8.firebaseapp.com",
@@ -42,16 +83,33 @@
             appId: "1:741029675696:web:86331dc6ab82551d86f175"
         };
         firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
         const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // Check Auth State
         auth.onAuthStateChanged(user => {
             if (user) {
-                document.getElementById('u-email').innerText = user.email;
+                document.getElementById("email-display").innerText = user.email;
+                
+                // Fetch User Data from Firestore
                 db.collection("users").doc(user.uid).onSnapshot(doc => {
-                    if (doc.exists) document.getElementById("u-balance").innerText = doc.data().balance || 0;
+                    if (doc.exists) {
+                        const data = doc.data();
+                        document.getElementById("balance-display").innerText = data.balance || 0;
+                        document.getElementById("spent-display").innerText = data.spent || 0;
+                    }
                 });
-            } else { window.location.href = 'login.html'; }
+            } else {
+                window.location.href = 'login.html';
+            }
         });
+
+        // Logout Function
+        function logoutUser() {
+            auth.signOut().then(() => {
+                window.location.href = 'login.html';
+            });
+        }
     </script>
 </body>
 </html>
