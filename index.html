@@ -35,7 +35,7 @@
         .all-items-title span { width: 40px; height: 3px; background: #fb923c; }
 
         .items-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 0 15px; }
-        .item-card { background: white; border-radius: 18px; overflow: hidden; text-align: center; border: 3px solid #ff2e97; transition: 0.3s; }
+        .item-card { background: white; border-radius: 18px; overflow: hidden; text-align: center; border: 3px solid #ff2e97; transition: 0.3s; cursor: pointer; }
         .item-card img { width: 100%; height: 130px; object-fit: cover; }
         .item-card h3 { font-size: 14px; padding: 12px 5px; background: #ff2e97; color: white; text-transform: uppercase; }
 
@@ -60,33 +60,33 @@
     </div>
 
     <div class="support-grid">
-        <a href="#" class="support-item" style="color: #22c55e;"><i>🟢</i> WhatsApp</a>
-        <a href="#" class="support-item" style="color: #0ea5e9;"><i>🔵</i> Telegram</a>
+        <a href="https://wa.me/YOUR_NUMBER" class="support-item" style="color: #22c55e;"><i>🟢</i> WhatsApp</a>
+        <a href="https://t.me/YOUR_CHANNEL" class="support-item" style="color: #0ea5e9;"><i>🔵</i> Telegram</a>
         <a href="#" class="support-item" style="color: #f59e0b;"><i>📲</i> App Download</a>
     </div>
 
     <div class="all-items-title"><span></span> ALL ITEMS <span></span></div>
 
     <div class="items-container">
-        <div class="item-card" onclick="window.location.href='shop'">
+        <div class="item-card" onclick="window.location.href='shop.html'">
             <img src="https://i.ibb.co/v6mXmY8/drip-client-logo.png" alt="Drip Client">
             <h3>DRIP CLIENT</h3>
         </div>
-        <div class="item-card" onclick="window.location.href='shop'">
+        <div class="item-card" onclick="window.location.href='shop.html'">
             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_R0W0f0uOa7Iu2hE..." alt="HG Cheats">
             <h3>HG CHEATS</h3>
         </div>
     </div>
 
     <div class="bottom-bar">
-        <a href="index" class="nav-link">🏠<br>Home</a>
-        <a href="add-money" class="nav-link">💳<br>Add Fund</a>
+        <a href="index.html" class="nav-link">🏠<br>Home</a>
+        <a href="add-money.html" class="nav-link">💳<br>Add Fund</a>
         <a href="#" class="nav-link" onclick="alert('Coming Soon')">🎁<br>My Codes</a>
-        <a href="dashboard" class="nav-link">👤<br>Account</a>
+        <a href="dashboard.html" class="nav-link">👤<br>Account</a>
     </div>
 
     <script>
-        // আপনার Firebase কনফিগারেশন
+        // Firebase কনফিগারেশন
         const firebaseConfig = {
             apiKey: "AIzaSyBx8h5PYxI34ZTaHs9ScdA8puSBt6h8yYU",
             authDomain: "panelshop-71ed8.firebaseapp.com",
@@ -99,11 +99,18 @@
         const db = firebase.firestore();
         const auth = firebase.auth();
 
+        // লগইন স্ট্যাটাস চেক
         auth.onAuthStateChanged(user => {
             if (user) {
+                // যদি লগইন থাকে, ব্যালেন্স দেখাও
                 db.collection("users").doc(user.uid).onSnapshot(doc => {
-                    if (doc.exists) document.getElementById("balance").innerText = doc.data().balance || 0;
+                    if (doc.exists) {
+                        document.getElementById("balance").innerText = doc.data().balance || 0;
+                    }
                 });
+            } else {
+                // যদি লগইন না থাকে, login.html-এ নিয়ে যাও
+                window.location.href = 'login.html';
             }
         });
     </script>
