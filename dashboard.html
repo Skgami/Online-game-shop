@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gamer Dashboard</title>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Oxanium:wght@400;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Oxanium', sans-serif; }
+        body { background-color: #050a18; color: white; padding: 20px; min-height: 100vh; }
+        
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .user-info { font-size: 18px; color: #38bdf8; font-weight: bold; }
+        .logout-btn { background: #f43f5e; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+
+        .balance-card { background: linear-gradient(135deg, #6366f1, #a855f7); padding: 35px 20px; border-radius: 20px; text-align: center; margin-bottom: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .balance-label { font-size: 14px; opacity: 0.9; text-transform: uppercase; }
+        .balance-amount { font-size: 36px; font-weight: 800; display: block; margin-top: 10px; }
+
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .menu-item { background: #0f172a; padding: 25px 15px; border-radius: 18px; border: 1px solid #1e293b; text-align: center; cursor: pointer; transition: 0.3s; }
+        .menu-item:active { transform: scale(0.95); background: #1e293b; }
+        .menu-item i { font-size: 30px; display: block; margin-bottom: 10px; }
+        .menu-item span { font-weight: bold; font-size: 14px; color: #cbd5e1; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="user-info">WELCOME, <span id="user-name">User</span></div>
+        <button class="logout-btn" onclick="logout()">LOGOUT</button>
+    </div>
+
+    <div class="balance-card">
+        <span class="balance-label">Current Balance</span>
+        <span class="balance-amount">৳ <span id="balance">0.00</span></span>
+    </div>
+
+    <div class="menu-grid">
+        <div class="menu-item" onclick="window.location.href='add-money.html'">
+            <i>💰</i>
+            <span>ADD MONEY</span>
+        </div>
+
+        <div class="menu-item" onclick="window.location.href='shop.html'">
+            <i>🎮</i>
+            <span>GAME SHOP</span>
+        </div>
+
+        <div class="menu-item" onclick="alert('Orders Coming Soon!')">
+            <i>📋</i>
+            <span>ORDERS</span>
+        </div>
+
+        <div class="menu-item" onclick="alert('Profile Coming Soon!')">
+            <i>👤</i>
+            <span>PROFILE</span>
+        </div>
+    </div>
+
+    <script>
+        // আপনার সঠিক Firebase কনফিগারেশন
+        const firebaseConfig = {
+            apiKey: "AIzaSyBx8h5PYxI34ZTaHs9ScdA8puSBt6h8yYU",
+            authDomain: "panelshop-71ed8.firebaseapp.com",
+            projectId: "panelshop-71ed8",
+            storageBucket: "panelshop-71ed8.firebasestorage.app",
+            messagingSenderId: "741029675696",
+            appId: "1:741029675696:web:86331dc6ab82551d86f175"
+        };
+
+        // ফায়ারবেস ইনিশিয়ালাইজেশন
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // রিয়েল-টাইম ডাটা আপডেট
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                db.collection("users").doc(user.uid).onSnapshot(doc => {
+                    if (doc.exists) {
+                        const userData = doc.data();
+                        document.getElementById("user-name").innerText = userData.name || "User";
+                        document.getElementById("balance").innerText = (userData.balance || 0).toFixed(2);
+                    }
+                });
+            } else {
+                // লগইন না থাকলে ইনডেক্স পেজে পাঠিয়ে দিবে
+                window.location.href = "index.html";
+            }
+        });
+
+        // লগআউট ফাংশন
+        function logout() {
+            auth.signOut().then(() => {
+                window.location.href = "index.html";
+            });
+        }
+    </script>
+</body>
+</html>

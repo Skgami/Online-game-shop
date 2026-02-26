@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders - অনলাইন গেমস</title>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Oxanium:wght@400;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Oxanium', sans-serif; }
+        body { background-color: #f1f5f9; color: #333; padding: 20px; }
+
+        .header { display: flex; align-items: center; margin-bottom: 20px; }
+        .back-btn { background: #1e293b; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; }
+
+        .title { text-align: center; margin-bottom: 20px; color: #1e293b; font-size: 22px; }
+
+        #order-list { display: flex; flex-direction: column; gap: 15px; }
+        .order-card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-left: 5px solid #ff2e97; }
+        
+        .order-info { display: flex; justify-content: space-between; align-items: flex-start; }
+        .order-info h3 { font-size: 16px; color: #1e293b; }
+        .order-info .status { font-size: 12px; padding: 4px 10px; border-radius: 20px; font-weight: bold; text-transform: uppercase; }
+        
+        .status-pending { background: #fef3c7; color: #92400e; }
+        .status-success { background: #dcfce7; color: #166534; }
+        
+        .order-details { margin-top: 10px; font-size: 13px; color: #64748b; }
+        .order-price { font-weight: bold; color: #10b981; }
+
+        .no-order { text-align: center; margin-top: 50px; color: #94a3b8; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <button class="back-btn" onclick="window.location.href='index'">← HOME</button>
+    </div>
+
+    <h2 class="title">🛍️ MY ORDERS</h2>
+
+    <div id="order-list">
+        <p class="no-order">Loading orders...</p>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBx8h5PYxI34ZTaHs9ScdA8puSBt6h8yYU",
+            authDomain: "panelshop-71ed8.firebaseapp.com",
+            projectId: "panelshop-71ed8",
+            storageBucket: "panelshop-71ed8.firebasestorage.app",
+            messagingSenderId: "741029675696",
+            appId: "1:741029675696:web:86331dc6ab82551d86f175"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                // শুধুমাত্র বর্তমান ইউজারের অর্ডারগুলো দেখাবে
+                db.collection("orders")
+                  .where("uid", "==", user.uid)
+                  .onSnapshot(snapshot => {
+                    const orderList = document.getElementById("order-list");
+                    orderList.innerHTML = "";
+
+                    if (snapshot.empty) {
+                        orderList.innerHTML = '<p class="no-order">আপনি এখনো কোনো অর্ডার করেননি।</p>';
+                        return;
+                    }
+
+                    snapshot.forEach(doc => {
+                        const order = doc.data();
+                        const statusClass = order.status === "Success" ? "status-success" : "status-pending";
+                        
+                        const orderHtml = `
+                            <div class="order-card">
+                                <div class="order-info">
+                                    <h3>${order.itemName}</h3>
+                                    <span class="status ${statusClass}">${order.status}</span>
+                                </div>
+                                <div class="order-details">
+                                    Price: <span class="order-price">৳ ${order.price}</span><br>
+                                    Date: ${order.date}
+                                </div>
+                            </div>
+                        `;
+                        orderList.innerHTML += orderHtml;
+                    });
+                });
+            } else {
+                window.location.href = 'index'; // লগইন না থাকলে হোম পেজে পাঠিয়ে দিবে
+            }
+        });
+    </script>
+</body>
+</html>

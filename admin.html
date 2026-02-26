@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - অনলাইন গেমস</title>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Oxanium:wght@400;700&display=swap');
+        body { font-family: 'Oxanium', sans-serif; background: #f0f2f5; padding: 20px; }
+        .card { background: white; padding: 15px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-left: 5px solid #3b82f6; }
+        .btn-approve { background: #22c55e; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-right: 5px; }
+        .btn-reject { background: #ef4444; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .info { margin-bottom: 15px; line-height: 1.6; }
+        .info b { color: #1e293b; }
+        h2 { text-align: center; color: #1e293b; margin-bottom: 25px; }
+    </style>
+</head>
+<body>
+
+    <h2>🛠️ Payment Admin Dashboard</h2>
+    <div id="request-list">লোড হচ্ছে...</div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBx8h5PYxI34ZTaHs9ScdA8puSBt6h8yYU",
+            authDomain: "panelshop-71ed8.firebaseapp.com",
+            projectId: "panelshop-71ed8",
+            storageBucket: "panelshop-71ed8.firebasestorage.app",
+            messagingSenderId: "741029675696",
+            appId: "1:741029675696:web:86331dc6ab82551d86f175"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // পেন্ডিং রিকোয়েস্ট রিয়েল-টাইমে দেখা
+        db.collection("deposit_requests").where("status", "==", "Pending").onSnapshot(snapshot => {
+            const list = document.getElementById("request-list");
+            list.innerHTML = "";
+            
+            if (snapshot.empty) {
+                list.innerHTML = "<p style='text-align:center; color: gray;'>কোনো নতুন রিকোয়েস্ট নেই।</p>";
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                const req = doc.data();
+                const id = doc.id;
+                list.innerHTML += `
+                    <div class="card">
+                        <div class="info">
+                            <b>মেথড:</b> ${req.method} <br>
+                            <b>টাকা:</b> ৳${req.amount} <br>
+                            <b>সেন্ডার নাম্বার:</b> ${req.senderNumber} <br>
+                            <b>TrxID:</b> <span style="color: blue;">${req.transactionID}</span> <br>
+                            <b>ইউজার আইডি:</b> ${req.uid}
+                        </div>
+                        <button class="btn-approve" onclick="approve('${id}', '${req.uid}', ${req.amount})">APPROVE (টাকা অ্যাড)</button>
+                        <button class="btn-reject" onclick="reject('${id}')">REJECT</button>
+                    </div>
+                `;
+            });
+        });
+
+        async function approve(docId, uid, amount) {
+            if(confirm("আপনি কি এই পেমেন্টটি ভেরিফাই করেছেন? এটি করলে ইউজারের ব্যালেন্সে টাকা জমা হয়ে যাবে।")) {
+                const userRef = db.collection("users").doc(uid);
+                const userDoc = await userRef.get();
+                
+                if (userDoc.exists) {
+                    const currentBalance = userDoc.data().balance || 0;
+                    await userRef.update({ balance: currentBalance + amount });
+                    await db.collection("deposit_requests").doc(docId).update({ status: "Success" });
+                    alert("ব্যালেন্স অ্যাড হয়েছে!");
+                } else {
+                    alert("ইউজার ডাটা পাওয়া যায়নি!");
+                }
+            }
+        }
+
+        async function reject(docId) {
+            if(confirm("আপনি কি নিশ্চিত যে এই রিকোয়েস্টটি বাতিল করবেন?")) {
+                await db.collection("deposit_requests").doc(docId).update({ status: "Rejected" });
+            }
+        }
+    </script>
+</body>
+</html>

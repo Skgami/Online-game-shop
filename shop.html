@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drip Client Shop</title>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Oxanium:wght@400;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Oxanium', sans-serif; }
+        body { background-color: #0b0f1a; color: white; padding: 15px; text-align: center; }
+
+        .header { display: flex; justify-content: flex-start; margin-bottom: 10px; }
+        .back-btn { background: #1e293b; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 14px; }
+        
+        .logo-container { margin: 10px auto 20px; }
+        .logo-img { width: 140px; filter: drop-shadow(0 0 10px #bc13fe); }
+        
+        .shop-title { font-size: 20px; font-weight: bold; color: #ff2e97; text-transform: uppercase; margin-bottom: 25px; }
+
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .card { background: #161b2c; border-radius: 15px; border: 1px solid #2d334a; padding: 20px 10px; }
+        .card h3 { font-size: 15px; margin-bottom: 8px; color: #fff; }
+        .card .price { display: block; color: #ff2e97; font-weight: bold; font-size: 18px; margin-bottom: 15px; }
+        
+        .buy-btn { background: #ff2e97; color: white; border: none; padding: 10px 0; width: 90%; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        .buy-btn:active { transform: scale(0.95); }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <button class="back-btn" onclick="window.location.href='index'">← BACK</button>
+    </div>
+
+    <div class="logo-container">
+        <img src="https://i.ibb.co/v6mXmY8/drip-client-logo.png" alt="Drip Client" class="logo-img">
+    </div>
+
+    <h2 class="shop-title">FF Premium Panel</h2>
+
+    <div class="grid">
+        <div class="card">
+            <h3>1 Day</h3>
+            <span class="price">৳ 80</span>
+            <button class="buy-btn" onclick="buy('Dripline 1 Day', 80)">BUY</button>
+        </div>
+
+        <div class="card">
+            <h3>7 Days</h3>
+            <span class="price">৳ 350</span>
+            <button class="buy-btn" onclick="buy('Dripline 7 Days', 350)">BUY</button>
+        </div>
+
+        <div class="card">
+            <h3>15 Days</h3>
+            <span class="price">৳ 600</span>
+            <button class="buy-btn" onclick="buy('Dripline 15 Days', 600)">BUY</button>
+        </div>
+
+        <div class="card">
+            <h3>1 Month</h3>
+            <span class="price">৳ 900</span>
+            <button class="buy-btn" onclick="buy('Dripline 1 Month', 900)">BUY</button>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBx8h5PYxI34ZTaHs9ScdA8puSBt6h8yYU",
+            authDomain: "panelshop-71ed8.firebaseapp.com",
+            projectId: "panelshop-71ed8",
+            storageBucket: "panelshop-71ed8.firebasestorage.app",
+            messagingSenderId: "741029675696",
+            appId: "1:741029675696:web:86331dc6ab82551d86f175"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        async function buy(name, price) {
+            const user = auth.currentUser;
+            if (!user) return alert("দয়া করে আগে লগইন করুন!");
+
+            const userRef = db.collection("users").doc(user.uid);
+            const doc = await userRef.get();
+            const balance = doc.data().balance || 0;
+
+            if (balance < price) {
+                alert("আপনার পর্যাপ্ত ব্যালেন্স নেই! দয়া করে অ্যাড মানি করুন।");
+            } else {
+                if (confirm(name + " কিনতে চান? ৳" + price + " কাটা হবে।")) {
+                    await userRef.update({ balance: balance - price });
+                    await db.collection("orders").add({
+                        uid: user.uid,
+                        userName: doc.data().name || "Unknown User",
+                        itemName: name,
+                        price: price,
+                        status: "Pending",
+                        phone: "01992170327",
+                        date: new Date().toLocaleString()
+                    });
+                    alert("অর্ডার সফল হয়েছে! অ্যাডমিন আপনার সাথে যোগাযোগ করবে।");
+                }
+            }
+        }
+    </script>
+</body>
+</html>
