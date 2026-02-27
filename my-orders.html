@@ -1,51 +1,279 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Orders - অনলাইন গেমস</title>
+    <title>My Orders History - Premium Panel Shop</title>
+    
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Oxanium:wght@400;700&display=swap');
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Oxanium', sans-serif; }
-        body { background-color: #f1f5f9; color: #333; padding: 20px; }
+        @import url('https://fonts.googleapis.com/css2?family=Oxanium:wght@300;400;600;800&display=swap');
 
-        .header { display: flex; align-items: center; margin-bottom: 20px; }
-        .back-btn { background: #1e293b; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; }
+        :root {
+            --primary-color: #f43f5e;
+            --bg-dark: #0f172a;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+        }
 
-        .title { text-align: center; margin-bottom: 20px; color: #1e293b; font-size: 22px; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Oxanium', sans-serif;
+        }
 
-        #order-list { display: flex; flex-direction: column; gap: 15px; }
-        .order-card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-left: 5px solid #ff2e97; }
-        
-        .order-info { display: flex; justify-content: space-between; align-items: flex-start; }
-        .order-info h3 { font-size: 16px; color: #1e293b; }
-        .order-info .status { font-size: 12px; padding: 4px 10px; border-radius: 20px; font-weight: bold; text-transform: uppercase; }
-        
-        .status-pending { background: #fef3c7; color: #92400e; }
+        body {
+            background-color: #f1f5f9;
+            color: var(--text-main);
+            padding-bottom: 100px;
+            overflow-x: hidden;
+        }
+
+        /* Header Styles */
+        .header-section {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .header-section h1 {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+
+        .header-section p {
+            font-size: 13px;
+            opacity: 0.8;
+        }
+
+        /* Search and Filter Section */
+        .filter-container {
+            margin: -25px 20px 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14px;
+            margin-bottom: 10px;
+            outline: none;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+
+        .tab {
+            padding: 8px 15px;
+            background: #f8fafc;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: 0.3s;
+        }
+
+        .tab.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* Orders List */
+        .orders-list {
+            padding: 10px 20px;
+        }
+
+        .order-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 18px;
+            margin-bottom: 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.03);
+            border-left: 5px solid var(--primary-color);
+            animation: slideUp 0.5s ease forwards;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .order-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .order-id {
+            font-size: 10px;
+            color: var(--text-muted);
+            font-weight: bold;
+            display: block;
+        }
+
+        .product-name {
+            font-size: 16px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-top: 2px;
+        }
+
+        .status-badge {
+            font-size: 11px;
+            font-weight: bold;
+            padding: 5px 12px;
+            border-radius: 20px;
+            text-transform: uppercase;
+        }
+
         .status-success { background: #dcfce7; color: #166534; }
-        
-        .order-details { margin-top: 10px; font-size: 13px; color: #64748b; }
-        .order-price { font-weight: bold; color: #10b981; }
+        .status-pending { background: #fef9c3; color: #854d0e; }
 
-        .no-order { text-align: center; margin-top: 50px; color: #94a3b8; }
+        .order-info {
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 13px;
+        }
+
+        .label { color: var(--text-muted); }
+        .value { font-weight: 700; color: var(--text-main); }
+
+        .copy-code-box {
+            background: #1e293b;
+            color: #38bdf8;
+            padding: 10px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .copy-btn {
+            background: #38bdf8;
+            color: #1e293b;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 5px;
+            font-size: 10px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* No Orders Style */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-state i {
+            font-size: 50px;
+            color: #cbd5e1;
+            margin-bottom: 15px;
+        }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 15px;
+            border-top: 1px solid #e2e8f0;
+            z-index: 100;
+        }
+
+        .nav-item {
+            text-align: center;
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .nav-item.active {
+            color: var(--primary-color);
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+            display: block;
+        }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <button class="back-btn" onclick="window.location.href='index'">← HOME</button>
+    <div class="header-section">
+        <h1>MY ORDERS</h1>
+        <p>আপনার কেনা সকল প্যানেল ও কোড এখানে পাবেন</p>
     </div>
 
-    <h2 class="title">🛍️ MY ORDERS</h2>
+    <div class="filter-container">
+        <input type="text" class="search-box" id="searchInput" placeholder="অর্ডার আইডি বা নাম দিয়ে সার্চ করুন..." onkeyup="filterOrders()">
+        <div class="filter-tabs">
+            <div class="tab active" onclick="setFilter('all', this)">All Orders</div>
+            <div class="tab" onclick="setFilter('success', this)">Completed</div>
+            <div class="tab" onclick="setFilter('pending', this)">Processing</div>
+        </div>
+    </div>
 
-    <div id="order-list">
-        <p class="no-order">Loading orders...</p>
+    <div class="orders-list" id="ordersDisplay">
+        <div style="text-align:center; padding: 40px; color: #64748b;">লোড হচ্ছে... অনুগ্রহ করে অপেক্ষা করুন।</div>
+    </div>
+
+    <div class="bottom-nav">
+        <a href="index.html" class="nav-item">
+            <span class="nav-icon">🏠</span> Home
+        </a>
+        <a href="add-money.html" class="nav-item">
+            <span class="nav-icon">💳</span> Add Fund
+        </a>
+        <a href="my-orders.html" class="nav-item active">
+            <span class="nav-icon">📦</span> Orders
+        </a>
+        <a href="dashboard.html" class="nav-item">
+            <span class="nav-icon">👤</span> Profile
+        </a>
     </div>
 
     <script>
+        // Firebase Configuration (Same as yours)
         const firebaseConfig = {
             apiKey: "AIzaSyBx8h5PYxI34ZTaHs9ScdA8puSBt6h8yYU",
             authDomain: "panelshop-71ed8.firebaseapp.com",
@@ -55,46 +283,104 @@
             appId: "1:741029675696:web:86331dc6ab82551d86f175"
         };
         firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
         const db = firebase.firestore();
+        const auth = firebase.auth();
 
+        let allOrders = [];
+
+        // Check Login and Fetch Data
         auth.onAuthStateChanged(user => {
             if (user) {
-                // শুধুমাত্র বর্তমান ইউজারের অর্ডারগুলো দেখাবে
-                db.collection("orders")
-                  .where("uid", "==", user.uid)
-                  .onSnapshot(snapshot => {
-                    const orderList = document.getElementById("order-list");
-                    orderList.innerHTML = "";
-
-                    if (snapshot.empty) {
-                        orderList.innerHTML = '<p class="no-order">আপনি এখনো কোনো অর্ডার করেননি।</p>';
-                        return;
-                    }
-
-                    snapshot.forEach(doc => {
-                        const order = doc.data();
-                        const statusClass = order.status === "Success" ? "status-success" : "status-pending";
-                        
-                        const orderHtml = `
-                            <div class="order-card">
-                                <div class="order-info">
-                                    <h3>${order.itemName}</h3>
-                                    <span class="status ${statusClass}">${order.status}</span>
-                                </div>
-                                <div class="order-details">
-                                    Price: <span class="order-price">৳ ${order.price}</span><br>
-                                    Date: ${order.date}
-                                </div>
-                            </div>
-                        `;
-                        orderList.innerHTML += orderHtml;
-                    });
-                });
+                fetchOrders(user.uid);
             } else {
-                window.location.href = 'index'; // লগইন না থাকলে হোম পেজে পাঠিয়ে দিবে
+                window.location.href = 'login.html';
             }
         });
+
+        function fetchOrders(uid) {
+            db.collection("orders").where("uid", "==", uid).orderBy("timestamp", "desc").onSnapshot(snapshot => {
+                allOrders = [];
+                snapshot.forEach(doc => {
+                    allOrders.push({ id: doc.id, ...doc.data() });
+                });
+                renderOrders(allOrders);
+            }, error => {
+                console.log(error);
+                document.getElementById('ordersDisplay').innerHTML = "অর্ডার লোড করতে সমস্যা হচ্ছে। অ্যাডমিনের সাথে যোগাযোগ করুন।";
+            });
+        }
+
+        function renderOrders(orders) {
+            const display = document.getElementById('ordersDisplay');
+            if (orders.length === 0) {
+                display.innerHTML = `
+                    <div class="empty-state">
+                        <span>📭</span>
+                        <p>আপনার কোনো অর্ডার খুঁজে পাওয়া যায়নি!</p>
+                    </div>`;
+                return;
+            }
+
+            display.innerHTML = orders.map(order => {
+                const date = order.timestamp ? new Date(order.timestamp.seconds * 1000).toLocaleString() : 'N/A';
+                const statusClass = order.status === 'success' ? 'status-success' : 'status-pending';
+                
+                return `
+                    <div class="order-card">
+                        <div class="order-top">
+                            <div>
+                                <span class="order-id">#${order.id.substring(0, 10)}</span>
+                                <h3 class="product-name">${order.productName || 'Unknown Product'}</h3>
+                            </div>
+                            <span class="status-badge ${statusClass}">${order.status || 'Success'}</span>
+                        </div>
+                        
+                        <div class="order-info">
+                            <div class="info-row">
+                                <span class="label">Amount:</span>
+                                <span class="value">৳${order.price || 0}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Order Date:</span>
+                                <span class="value">${date}</span>
+                            </div>
+                        </div>
+
+                        <div class="copy-code-box">
+                            <span>Code: ${order.details || 'Processing...'}</span>
+                            <button class="copy-btn" onclick="copyToClipboard('${order.details}')">COPY</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert("কোডটি কপি করা হয়েছে!");
+            });
+        }
+
+        function filterOrders() {
+            const term = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = allOrders.filter(o => 
+                (o.productName && o.productName.toLowerCase().includes(term)) || 
+                (o.id && o.id.toLowerCase().includes(term))
+            );
+            renderOrders(filtered);
+        }
+
+        function setFilter(type, el) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+            
+            if (type === 'all') {
+                renderOrders(allOrders);
+            } else {
+                const filtered = allOrders.filter(o => o.status === type);
+                renderOrders(filtered);
+            }
+        }
     </script>
 </body>
 </html>
