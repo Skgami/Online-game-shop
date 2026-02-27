@@ -2,25 +2,45 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <title>লগইন | PanelShop</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>লগইন | PanelShop Pro</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body class="bg-[#0f172a] text-white flex items-center justify-center min-h-screen p-4">
+<body class="bg-[#0b0f1a] text-white flex items-center justify-center min-h-screen p-4">
 
-    <div class="bg-[#1e293b] p-8 rounded-2xl shadow-2xl w-full max-w-md border border-slate-700">
-        <h2 class="text-3xl font-bold text-center text-blue-500 mb-8">PANEL SHOP</h2>
-        <div class="space-y-5">
-            <input type="email" id="email" class="w-full bg-[#0f172a] border border-slate-600 p-3 rounded-xl text-white outline-none focus:ring-2 focus:ring-blue-500" placeholder="ইমেইল">
-            <input type="password" id="password" class="w-full bg-[#0f172a] border border-slate-600 p-3 rounded-xl text-white outline-none focus:ring-2 focus:ring-blue-500" placeholder="পাসওয়ার্ড">
-            <button onclick="handleLogin()" id="lBtn" class="w-full bg-rose-600 p-4 rounded-xl font-bold hover:bg-rose-700 transition transform active:scale-95 shadow-lg">Login Account</button>
-            <p class="text-center text-sm text-slate-400">অ্যাকাউন্ট নেই? <a href="signup.html" class="text-blue-500 hover:underline">Sign Up</a></p>
+    <div class="bg-[#161b2c] p-10 rounded-3xl shadow-2xl w-full max-w-md border border-slate-800">
+        <div class="text-center mb-8">
+            <div class="bg-rose-600 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-rose-900/40">
+                <i class="fas fa-shield-halved text-2xl"></i>
+            </div>
+            <h1 class="text-3xl font-extrabold text-white tracking-tight">Welcome Back</h1>
+            <p class="text-slate-400 mt-2">Sign in to manage your shop</p>
+        </div>
+
+        <div class="space-y-6">
+            <div class="relative">
+                <i class="fas fa-user-circle absolute left-4 top-4 text-slate-500"></i>
+                <input type="email" id="email" class="w-full bg-[#0b0f1a] border border-slate-700 p-4 pl-12 rounded-xl text-white outline-none focus:border-rose-500 transition-all" placeholder="Email Address">
+            </div>
+            <div class="relative">
+                <i class="fas fa-key absolute left-4 top-4 text-slate-500"></i>
+                <input type="password" id="password" class="w-full bg-[#0b0f1a] border border-slate-700 p-4 pl-12 rounded-xl text-white outline-none focus:border-rose-500 transition-all" placeholder="Password">
+            </div>
+
+            <button onclick="handleLogin()" id="lBtn" class="w-full bg-rose-600 hover:bg-rose-700 p-4 rounded-xl font-bold text-lg shadow-lg shadow-rose-900/30 transition-all transform active:scale-95">
+                Login Account
+            </button>
+
+            <div class="text-center pt-4 border-t border-slate-800">
+                <p class="text-slate-400 text-sm">New member? <a href="signup.html" class="text-rose-500 hover:underline font-bold">Create Account</a></p>
+            </div>
         </div>
     </div>
 
     <script>
-        // আমি আপনার স্ক্রিনশট থেকে কনফিগ বসিয়ে দিয়েছি
         const firebaseConfig = {
             apiKey: "AIzaSyBx8hSPYxI34ZTaHs9ScdA8pGz9rO-o-O8",
             authDomain: "panelshop-71ed8.firebaseapp.com",
@@ -39,17 +59,19 @@
             const password = document.getElementById('password').value.trim();
             const btn = document.getElementById('lBtn');
 
-            if(!email || !password) return alert("ইমেইল এবং পাসওয়ার্ড দিন!");
+            if(!email || !password) return alert("Please enter valid credentials!");
 
-            btn.disabled = true; btn.innerText = "Processing...";
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Verifying...';
 
             try {
                 const res = await firebase.auth().signInWithEmailAndPassword(email, password);
                 localStorage.setItem("userId", res.user.uid);
                 window.location.href = "index.html"; 
             } catch (err) {
-                alert("Login Failed: " + err.message);
-                btn.disabled = false; btn.innerText = "Login Account";
+                alert("Access Denied: " + err.message);
+                btn.disabled = false;
+                btn.innerText = "Login Account";
             }
         }
     </script>
