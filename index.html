@@ -2,333 +2,363 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium Panel Shop | Home</title>
-    
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Panel Shop | Premium Gaming Solutions</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Syncopate:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Oxanium:wght@300;400;600;800&display=swap');
-
+        /* ========================================
+           ADVANCED UI ARCHITECTURE
+           ======================================== */
         :root {
-            --primary: #f43f5e;
-            --secondary: #3b82f6;
-            --dark: #0f172a;
-            --light: #f8fafc;
-            --accent: #ff2e97;
+            --primary: #6366f1;
+            --accent: #ff006e;
+            --bg-dark: #020617;
+            --card-glass: rgba(15, 23, 42, 0.7);
+            --border: rgba(255, 255, 255, 0.08);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --nav-height: 70px;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Oxanium', sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-        body { background-color: #f1f5f9; color: var(--dark); padding-bottom: 90px; overflow-x: hidden; }
+        body {
+            background-color: var(--bg-dark);
+            font-family: 'Outfit', sans-serif;
+            color: var(--text-main);
+            overflow-x: hidden;
+            padding-bottom: 90px; /* Space for bottom nav */
+        }
 
-        /* --- Animations --- */
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes glow { 0% { box-shadow: 0 0 5px var(--primary); } 50% { box-shadow: 0 0 20px var(--primary); } 100% { box-shadow: 0 0 5px var(--primary); } }
-
-        /* --- Navbar Styles --- */
-        .navbar {
-            background: white;
-            padding: 15px 20px;
+        /* --- Header / Top Bar --- */
+        .header-top {
+            height: var(--nav-height);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 0 20px;
+            background: rgba(2, 6, 23, 0.8);
+            backdrop-filter: blur(15px);
             position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            top: 0; z-index: 1000;
+            border-bottom: 1px solid var(--border);
         }
 
-        .brand { font-size: 22px; font-weight: 800; color: var(--primary); text-transform: uppercase; }
-        
-        .balance-card {
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            color: white;
+        .brand-logo {
+            font-family: 'Syncopate', sans-serif;
+            font-size: 20px;
+            letter-spacing: 2px;
+            background: linear-gradient(to right, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .balance-chip {
+            background: linear-gradient(135deg, var(--accent), #d12053);
             padding: 8px 15px;
-            border-radius: 50px;
+            border-radius: 100px;
             font-weight: 700;
+            font-size: 14px;
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 14px;
+            box-shadow: 0 4px 15px rgba(255, 0, 110, 0.3);
         }
 
-        /* --- Hero Banner --- */
-        .hero {
-            margin: 20px;
-            height: 160px;
-            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://i.ibb.co/v6mXmY8/drip-client-logo.png');
+        /* --- MEGA SMART BANNER (Swiper) --- */
+        .hero-banner-container {
+            padding: 20px;
+            margin-top: 10px;
+        }
+
+        .swiper {
+            width: 100%;
+            height: 200px;
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            border: 1px solid var(--border);
+        }
+
+        .swiper-slide {
+            position: relative;
             background-size: cover;
             background-position: center;
-            border-radius: 20px;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            text-align: center;
-            animation: fadeIn 0.8s ease;
+            align-items: flex-end;
+            padding: 20px;
         }
 
-        .hero h2 { font-size: 24px; font-weight: 800; }
-        .hero p { font-size: 12px; opacity: 0.9; }
+        .slide-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+        }
 
-        /* --- Notice Board --- */
-        .notice-container {
-            margin: 15px 20px;
-            background: #1e293b;
-            color: white;
+        .slide-content {
+            position: relative;
+            z-index: 10;
+        }
+
+        .slide-content h2 { font-size: 22px; font-weight: 800; color: #fff; }
+        .slide-content p { font-size: 12px; color: #cbd5e1; }
+
+        /* --- Notice Bar --- */
+        .notice-ticker {
+            margin: 0 20px;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
             padding: 12px;
-            border-radius: 12px;
+            border-radius: 15px;
             display: flex;
-            align-items: center;
-            gap: 10px;
+            gap: 15px;
             overflow: hidden;
         }
 
-        .notice-label { background: var(--primary); padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; }
-        
-        marquee { font-size: 13px; font-weight: 400; }
+        .notice-label {
+            background: var(--primary);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
 
-        /* --- Service Grid --- */
-        .section-title { margin: 20px 20px 10px; font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
-        .section-title::before { content: ""; width: 5px; height: 20px; background: var(--primary); border-radius: 5px; display: inline-block; }
+        marquee { font-size: 13px; color: #94a3b8; font-weight: 500; }
 
-        .grid-container {
+        /* --- Grid Quick Menu --- */
+        .quick-actions {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            padding: 25px 20px;
+        }
+
+        .action-card {
+            background: var(--card-glass);
+            border: 1px solid var(--border);
+            padding: 20px 10px;
+            border-radius: 20px;
+            text-align: center;
+            transition: 0.3s;
+            text-decoration: none;
+        }
+
+        .action-card:hover { transform: translateY(-5px); border-color: var(--primary); }
+        .action-card i { font-size: 24px; color: var(--primary); margin-bottom: 10px; display: block; }
+        .action-card span { font-size: 12px; font-weight: 700; color: var(--text-vibrant); }
+
+        /* --- Product Grid --- */
+        .section-header {
+            padding: 0 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-header .line { height: 20px; width: 4px; background: var(--primary); border-radius: 10px; }
+        .section-header h3 { font-size: 18px; font-weight: 800; }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
             gap: 15px;
             padding: 0 20px;
         }
 
-        .service-card {
-            background: white;
-            border-radius: 18px;
+        .product-card {
+            background: var(--card-glass);
+            border-radius: 25px;
             padding: 15px;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            border: 1px solid var(--border);
+            position: relative;
             transition: 0.3s;
-            border: 1px solid #eef2f6;
-            animation: fadeIn 1s ease;
         }
 
-        .service-card:active { transform: scale(0.95); }
-
-        .icon-box {
-            width: 60px;
-            height: 60px;
-            background: #f1f5f9;
+        .product-icon {
+            width: 60px; height: 60px;
+            background: rgba(255,255,255,0.05);
             border-radius: 15px;
-            margin: 0 auto 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 25px;
+            margin-bottom: 15px;
+            color: var(--primary);
         }
 
-        .service-card h3 { font-size: 14px; font-weight: 700; margin-bottom: 5px; }
-        .service-card p { font-size: 10px; color: #64748b; margin-bottom: 10px; }
+        .product-card h4 { font-size: 15px; font-weight: 700; margin-bottom: 5px; }
+        .product-card p { font-size: 11px; color: var(--text-dim); margin-bottom: 15px; }
+        .product-price { font-size: 16px; font-weight: 800; color: var(--accent); margin-bottom: 12px; display: block; }
 
         .btn-buy {
-            background: var(--dark);
+            width: 100%;
+            padding: 10px;
+            background: #1e293b;
             color: white;
             border: none;
-            padding: 6px 15px;
-            border-radius: 8px;
-            font-size: 11px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        /* --- Quick Actions --- */
-        .quick-actions {
-            display: flex;
-            justify-content: space-between;
-            margin: 20px;
-            gap: 10px;
-        }
-
-        .action-item {
-            flex: 1;
-            background: white;
-            padding: 15px 10px;
-            border-radius: 15px;
-            text-align: center;
-            text-decoration: none;
-            color: var(--dark);
-            font-size: 11px;
+            border-radius: 12px;
+            font-size: 12px;
             font-weight: 700;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: 0.3s;
         }
+
+        .product-card:hover .btn-buy { background: var(--primary); }
 
         /* --- Bottom Navigation --- */
         .bottom-nav {
             position: fixed;
-            bottom: 0;
-            width: 100%;
-            background: white;
+            bottom: 0; left: 0; width: 100%;
+            height: 75px;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
             display: flex;
             justify-content: space-around;
-            padding: 15px;
-            border-top: 1px solid #e2e8f0;
+            align-items: center;
+            border-top: 1px solid var(--border);
             z-index: 1000;
         }
 
-        .nav-item { text-align: center; text-decoration: none; color: #94a3b8; font-size: 10px; font-weight: bold; }
-        .nav-item.active { color: var(--primary); }
-        .nav-icon { font-size: 20px; display: block; margin-bottom: 2px; }
-
-        /* Loading Screen */
-        #loader {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: white;
-            display: flex; justify-content: center; align-items: center;
-            z-index: 9999;
+        .nav-item {
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            color: var(--text-dim);
+            transition: 0.3s;
         }
+
+        .nav-item.active { color: var(--primary); }
+        .nav-item i { font-size: 20px; }
+        .nav-item span { font-size: 10px; font-weight: 600; }
+
     </style>
 </head>
 <body>
 
-    <div id="loader">
-        <div style="text-align:center;">
-            <div style="width:50px; height:50px; border:5px solid #f1f5f9; border-top:5px solid var(--primary); border-radius:50%; animation: spin 1s linear infinite;"></div>
-            <p style="margin-top:15px; font-weight:bold; color:var(--dark);">Loading System...</p>
+    <header class="header-top">
+        <div class="brand-logo">PANEL SHOP</div>
+        <div class="balance-chip">
+            <i class="fas fa-wallet"></i>
+            <span>৳ 0.00</span>
+        </div>
+    </header>
+
+    <div class="hero-banner-container">
+        <div class="swiper">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide" style="background-image: url('https://i.ibb.co/3Y8p2vG/banner1.jpg');">
+                    <div class="slide-overlay"></div>
+                    <div class="slide-content">
+                        <h2>PREMIUM ACCESS</h2>
+                        <p>Best Gaming Panels in Bangladesh</p>
+                    </div>
+                </div>
+                <div class="swiper-slide" style="background-image: url('https://i.ibb.co/L5hYhGg/banner2.jpg');">
+                    <div class="slide-overlay"></div>
+                    <div class="slide-content">
+                        <h2>SPECIAL OFFER</h2>
+                        <p>Get 20% Discount on Monthly Packs</p>
+                    </div>
+                </div>
+                <div class="swiper-slide" style="background-image: url('https://i.ibb.co/m0fV9wW/banner3.jpg');">
+                    <div class="slide-overlay"></div>
+                    <div class="slide-content">
+                        <h2>INSTANT DEPOSIT</h2>
+                        <p>bKash & Nagad Automatic System</p>
+                    </div>
+                </div>
+            </div>
+            <div class="swiper-pagination"></div>
         </div>
     </div>
-    <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
 
-    <nav class="navbar">
-        <div class="brand">PANEL SHOP</div>
-        <div class="balance-card">
-            <span>৳</span> <span id="userBalance">0.00</span>
-        </div>
-    </nav>
-
-    <div class="hero">
-        <h2>PREMIUM ACCESS</h2>
-        <p>Best Gaming Panels & Cheats in Bangladesh</p>
-    </div>
-
-    <div class="notice-container">
-        <span class="notice-label">NOTICE</span>
-        <marquee>আমাদের সকল সার্ভিস এখন অটোমেটিক চালু আছে। পেমেন্ট করার ৫-১০ মিনিটের মধ্যে কোড পেয়ে যাবেন। সাপোর্ট এর জন্য হোয়াটসঅ্যাপ এ মেসেজ দিন।</marquee>
+    <div class="notice-ticker">
+        <div class="notice-label">NOTICE</div>
+        <marquee scrollamount="5">সকল সার্ভিস এখন অটোমেটিক চালু আছে। পেমেন্ট করার ৫ সেকেন্ডের মধ্যে ব্যালেন্স অ্যাড হবে।</marquee>
     </div>
 
     <div class="quick-actions">
-        <a href="add-money.html" class="action-item">
-            <span style="font-size:20px; display:block;">➕</span>Add Fund
+        <a href="add-money.html" class="action-card">
+            <i class="fas fa-plus-circle"></i>
+            <span>Add Fund</span>
         </a>
-        <a href="my-orders.html" class="action-item">
-            <span style="font-size:20px; display:block;">📜</span>History
+        <a href="history.html" class="action-card">
+            <i class="fas fa-history"></i>
+            <span>History</span>
         </a>
-        <a href="https://wa.me/YOUR_NUMBER" class="action-item">
-            <span style="font-size:20px; display:block;">💬</span>Support
+        <a href="support.html" class="action-card">
+            <i class="fas fa-headset"></i>
+            <span>Support</span>
         </a>
     </div>
 
-    <h2 class="section-title">পপুলার সার্ভিস সমূহ</h2>
-    
-    <div class="grid-container">
-        <div class="service-card">
-            <div class="icon-box">🛡️</div>
-            <h3>DRIP CLIENT</h3>
+    <div class="section-header">
+        <div class="line"></div>
+        <h3>Popular Services</h3>
+    </div>
+
+    <div class="products-grid">
+        <div class="product-card">
+            <div class="product-icon"><i class="fas fa-shield-halved"></i></div>
+            <h4>DRIP CLIENT</h4>
             <p>High Performance</p>
-            <div style="font-weight:800; margin-bottom:10px; color:var(--primary);">৳ ৫০০</div>
-            <button class="btn-buy" onclick="window.location.href='shop.html'">BUY NOW</button>
+            <span class="product-price">৳ 500</span>
+            <button class="btn-buy" onclick="location.href='shop.html'">BUY NOW</button>
         </div>
-
-        <div class="service-card">
-            <div class="icon-box">🔥</div>
-            <h3>HG CHEATS</h3>
+        <div class="product-card">
+            <div class="product-icon"><i class="fas fa-fire"></i></div>
+            <h4>HG CHEATS</h4>
             <p>Premium Mods</p>
-            <div style="font-weight:800; margin-bottom:10px; color:var(--primary);">৳ ৭৫০</div>
-            <button class="btn-buy" onclick="window.location.href='shop.html'">BUY NOW</button>
-        </div>
-
-        <div class="service-card">
-            <div class="icon-box">🎯</div>
-            <h3>AIM ASSIST</h3>
-            <p>Perfect Accuracy</p>
-            <div style="font-weight:800; margin-bottom:10px; color:var(--primary);">৳ ৩০০</div>
-            <button class="btn-buy" onclick="window.location.href='shop.html'">BUY NOW</button>
-        </div>
-
-        <div class="service-card">
-            <div class="icon-box">💎</div>
-            <h3>VIP PANEL</h3>
-            <p>All Features</p>
-            <div style="font-weight:800; margin-bottom:10px; color:var(--primary);">৳ ১২০০</div>
-            <button class="btn-buy" onclick="window.location.href='shop.html'">BUY NOW</button>
+            <span class="product-price">৳ 750</span>
+            <button class="btn-buy" onclick="location.href='shop.html'">BUY NOW</button>
         </div>
     </div>
 
-    <div class="bottom-nav">
+    <nav class="bottom-nav">
         <a href="index.html" class="nav-item active">
-            <span class="nav-icon">🏠</span>Home
+            <i class="fas fa-home"></i>
+            <span>Home</span>
         </a>
         <a href="add-money.html" class="nav-item">
-            <span class="nav-icon">💳</span>Deposit
+            <i class="fas fa-credit-card"></i>
+            <span>Deposit</span>
         </a>
         <a href="my-orders.html" class="nav-item">
-            <span class="nav-icon">📦</span>Orders
+            <i class="fas fa-box-open"></i>
+            <span>Orders</span>
         </a>
-        <a href="dashboard.html" class="nav-item">
-            <span class="nav-icon">👤</span>Profile
+        <a href="login.html" class="nav-item">
+            <i class="fas fa-user-circle"></i>
+            <span>Profile</span>
         </a>
-    </div>
+    </nav>
 
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
     <script>
-        // --- Firebase Configuration ---
-        const firebaseConfig = {
-            apiKey: "AIzaSyBx8h5PYxI34ZTaHs9ScdA8puSBt6h8yYU",
-            authDomain: "panelshop-71ed8.firebaseapp.com",
-            projectId: "panelshop-71ed8",
-            storageBucket: "panelshop-71ed8.firebasestorage.app",
-            messagingSenderId: "741029675696",
-            appId: "1:741029675696:web:86331dc6ab82551d86f175"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-
-        // --- Security Check (Login Detection) ---
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                console.log("User Logged In:", user.email);
-                
-                // Real-time Balance Update
-                db.collection("users").doc(user.uid).onSnapshot(doc => {
-                    if (doc.exists) {
-                        document.getElementById("userBalance").innerText = doc.data().balance || 0;
-                    } else {
-                        // Create User Doc if doesn't exist
-                        db.collection("users").doc(user.uid).set({
-                            email: user.email,
-                            balance: 0,
-                            spent: 0
-                        });
-                    }
-                    hideLoader();
-                });
-            } else {
-                // If not logged in, send to login page
-                window.location.href = 'login.html';
-            }
+        const swiper = new Swiper('.swiper', {
+            loop: true,
+            autoplay: {
+                delay: 3000,
+                disableOnInteraction: false,
+            },
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            effect: 'fade',
+            fadeEffect: {
+                crossFade: true
+            },
         });
-
-        function hideLoader() {
-            setTimeout(() => {
-                document.getElementById('loader').style.display = 'none';
-            }, 500);
-        }
-
-        // Error Handling
-        window.onerror = function() {
-            hideLoader();
-        };
     </script>
 </body>
 </html>
