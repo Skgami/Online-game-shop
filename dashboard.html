@@ -2,78 +2,269 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Account - Best Panel Shop</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>User Dashboard | Panel Shop Pro</title>
+    
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Oxanium:wght@400;700&display=swap');
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Oxanium', sans-serif; }
-        body { background: #f1f5f9; color: #333; padding-bottom: 80px; }
+        @import url('https://fonts.googleapis.com/css2?family=Oxanium:wght@300;600;800&family=Poppins:wght@300;400;600;700&display=swap');
 
-        /* Profile Header */
-        .profile-header { background: #1e293b; color: white; padding: 40px 20px; text-align: center; border-radius: 0 0 30px 30px; }
-        .user-icon { width: 80px; height: 80px; background: #f43f5e; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 35px; margin: 0 auto 15px; border: 4px solid rgba(255,255,255,0.2); }
-        .user-email { font-size: 16px; font-weight: bold; margin-bottom: 5px; }
+        :root {
+            --primary: #f43f5e;
+            --primary-soft: #fff1f2;
+            --dark: #0f172a;
+            --dark-light: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --white: #ffffff;
+            --success: #22c55e;
+        }
 
-        /* Stats Card */
-        .stats-container { margin: -30px 20px 20px; background: white; border-radius: 15px; padding: 20px; display: flex; justify-content: space-around; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .stat-box { text-align: center; }
-        .stat-value { display: block; font-size: 18px; font-weight: 800; color: #f43f5e; }
-        .stat-label { font-size: 12px; color: #64748b; font-weight: bold; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-        /* Menu List */
-        .menu-list { margin: 0 20px; background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .menu-item { display: flex; align-items: center; padding: 15px 20px; text-decoration: none; color: #1e293b; border-bottom: 1px solid #f1f5f9; font-weight: 600; font-size: 14px; transition: 0.3s; }
-        .menu-item:last-child { border-bottom: none; }
-        .menu-item:active { background: #f8fafc; }
-        .menu-icon { margin-right: 15px; font-size: 18px; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #0b0f1a;
+            color: var(--text-main);
+            padding-bottom: 100px;
+            overflow-x: hidden;
+        }
 
-        .logout-btn { margin: 25px 20px; background: #fee2e2; color: #ef4444; text-align: center; padding: 15px; border-radius: 12px; font-weight: 800; cursor: pointer; border: none; width: calc(100% - 40px); }
+        /* --- Custom Animations --- */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulseGlow { 0% { box-shadow: 0 0 5px var(--primary); } 50% { box-shadow: 0 0 20px var(--primary); } 100% { box-shadow: 0 0 5px var(--primary); } }
 
-        /* Bottom Menu */
-        .bottom-bar { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 12px 5px; border-top: 1px solid #e2e8f0; }
-        .nav-link { text-align: center; font-size: 10px; color: #64748b; text-decoration: none; font-weight: 600; }
+        /* --- Loader Style --- */
+        #dash-loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--dark); display: flex; justify-content: center;
+            align-items: center; z-index: 10000;
+        }
+        .spinner { width: 50px; height: 50px; border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* --- Top Navigation --- */
+        .top-nav {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0; z-index: 100;
+        }
+        .back-btn { background: var(--dark-light); border: none; color: white; padding: 8px 15px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; }
+        .page-title { font-family: 'Oxanium'; font-weight: 800; font-size: 18px; color: var(--primary); }
+
+        /* --- Profile Card --- */
+        .profile-section {
+            padding: 30px 20px;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+        .avatar-wrapper {
+            width: 100px; height: 100px;
+            margin: 0 auto 15px;
+            position: relative;
+        }
+        .avatar-img {
+            width: 100%; height: 100%;
+            background: linear-gradient(45deg, var(--primary), #ff7e5f);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 40px; border: 4px solid var(--dark-light);
+        }
+        .status-dot {
+            width: 15px; height: 15px; background: var(--success);
+            border: 3px solid var(--dark); border-radius: 50%;
+            position: absolute; bottom: 5px; right: 5px;
+        }
+        .user-name { font-size: 20px; font-weight: 700; margin-bottom: 5px; }
+        .user-uid { font-size: 10px; color: var(--text-muted); background: var(--dark-light); padding: 3px 10px; border-radius: 20px; }
+
+        /* --- Stats Grid --- */
+        .stats-grid {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 15px; padding: 0 20px; margin-bottom: 30px;
+        }
+        .stat-card {
+            background: var(--dark-light);
+            padding: 20px; border-radius: 20px;
+            text-align: center; border: 1px solid rgba(255,255,255,0.05);
+            transition: 0.3s;
+        }
+        .stat-card:active { transform: scale(0.95); }
+        .stat-icon { font-size: 24px; margin-bottom: 10px; display: block; }
+        .stat-value { font-family: 'Oxanium'; font-size: 20px; font-weight: 800; display: block; color: var(--primary); }
+        .stat-label { font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
+
+        /* --- Dashboard Menu --- */
+        .menu-container { padding: 0 20px; }
+        .menu-label { font-size: 12px; font-weight: 800; color: var(--text-muted); margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .menu-item {
+            background: var(--dark-light);
+            display: flex; align-items: center;
+            padding: 16px; border-radius: 15px;
+            text-decoration: none; color: white;
+            margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.02);
+            transition: 0.3s;
+        }
+        .menu-item:active { background: #2d3a4f; }
+        .menu-icon { 
+            width: 40px; height: 40px; background: rgba(244, 63, 94, 0.1);
+            border-radius: 12px; display: flex; align-items: center;
+            justify-content: center; color: var(--primary); font-size: 18px;
+            margin-right: 15px;
+        }
+        .menu-text { flex: 1; font-weight: 600; font-size: 14px; }
+        .menu-arrow { color: var(--text-muted); font-size: 12px; }
+
+        /* --- Recent Activity --- */
+        .activity-section { padding: 20px; margin-top: 20px; }
+        .activity-list { background: var(--dark-light); border-radius: 20px; padding: 10px; }
+        .activity-item {
+            display: flex; align-items: center; padding: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .activity-item:last-child { border-bottom: none; }
+        .act-icon { width: 35px; height: 35px; border-radius: 10px; background: rgba(34, 197, 94, 0.1); color: var(--success); display: flex; align-items: center; justify-content: center; margin-right: 12px; }
+        .act-info h4 { font-size: 13px; font-weight: 600; }
+        .act-info p { font-size: 10px; color: var(--text-muted); }
+
+        /* --- Logout Button --- */
+        .logout-wrapper { padding: 30px 20px; }
+        .btn-logout {
+            width: 100%; padding: 16px; border-radius: 15px;
+            background: rgba(244, 63, 94, 0.1); color: var(--primary);
+            border: 1px solid var(--primary); font-weight: 800;
+            cursor: pointer; transition: 0.3s; font-family: 'Oxanium';
+        }
+        .btn-logout:active { background: var(--primary); color: white; }
+
+        /* --- Bottom Nav --- */
+        .bottom-nav {
+            position: fixed; bottom: 0; width: 100%; height: 75px;
+            background: #0f172a; border-top: 1px solid rgba(255,255,255,0.05);
+            display: flex; justify-content: space-around; align-items: center;
+            z-index: 1000;
+        }
+        .nav-item { text-align: center; color: var(--text-muted); text-decoration: none; font-size: 10px; font-weight: 700; transition: 0.3s; }
+        .nav-item.active { color: var(--primary); }
+        .nav-item i { font-size: 22px; display: block; margin-bottom: 4px; }
+
     </style>
 </head>
 <body>
 
-    <div class="profile-header">
-        <div class="user-icon">👤</div>
-        <div class="user-email" id="email-display">Loading...</div>
-        <div style="font-size: 12px; opacity: 0.7;">Verified Member</div>
+    <div id="dash-loader">
+        <div class="spinner"></div>
     </div>
 
-    <div class="stats-container">
-        <div class="stat-box">
-            <span class="stat-value">৳ <span id="balance-display">0</span></span>
-            <span class="stat-label">Wallet Balance</span>
+    <div class="top-nav">
+        <button class="back-btn" onclick="history.back()">← Back</button>
+        <div class="page-title">DASHBOARD</div>
+        <div style="width: 60px;"></div> </div>
+
+    <div class="profile-section">
+        <div class="avatar-wrapper">
+            <div class="avatar-img">👤</div>
+            <div class="status-dot"></div>
         </div>
-        <div class="stat-box">
-            <span class="stat-value">৳ <span id="spent-display">0</span></span>
+        <h2 class="user-name" id="userName">User Name</h2>
+        <span class="user-uid" id="userEmail">email@example.com</span>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <span class="stat-icon">💰</span>
+            <span class="stat-value">৳ <span id="dashBalance">0.00</span></span>
+            <span class="stat-label">Current Balance</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-icon">🛒</span>
+            <span class="stat-value"><span id="dashOrders">0</span></span>
+            <span class="stat-label">Total Orders</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-icon">📉</span>
+            <span class="stat-value">৳ <span id="dashSpent">0</span></span>
             <span class="stat-label">Total Spent</span>
         </div>
+        <div class="stat-card">
+            <span class="stat-icon">⭐</span>
+            <span class="stat-value">VIP</span>
+            <span class="stat-label">Member Rank</span>
+        </div>
     </div>
 
-    <div class="menu-list">
-        <a href="add-money.html" class="menu-item"><span class="menu-icon">💳</span> Add Funds</a>
-        <a href="shop.html" class="menu-item"><span class="menu-icon">🛍️</span> Shop Now</a>
-        <a href="my-orders.html" class="menu-item"><span class="menu-icon">📦</span> My Orders</a>
-        <a href="https://wa.me/YOUR_NUMBER" class="menu-item"><span class="menu-icon">🎧</span> Support Center</a>
+    <div class="menu-container">
+        <p class="menu-label">Account Settings</p>
+        
+        <a href="add-money.html" class="menu-item">
+            <div class="menu-icon">💸</div>
+            <div class="menu-text">Add Money / Deposit</div>
+            <div class="menu-arrow">❯</div>
+        </a>
+
+        <a href="my-orders.html" class="menu-item">
+            <div class="menu-icon">🛍️</div>
+            <div class="menu-text">Order History</div>
+            <div class="menu-arrow">❯</div>
+        </a>
+
+        <a href="#" class="menu-item" onclick="alert('Password Change feature coming soon!')">
+            <div class="menu-icon">🔒</div>
+            <div class="menu-text">Security & Password</div>
+            <div class="menu-arrow">❯</div>
+        </a>
+
+        <a href="https://wa.me/YOUR_NUMBER" class="menu-item">
+            <div class="menu-icon">🎧</div>
+            <div class="menu-text">Contact Support</div>
+            <div class="menu-arrow">❯</div>
+        </a>
+
+        <p class="menu-label" style="margin-top: 25px;">Earn Rewards</p>
+
+        <a href="#" class="menu-item" onclick="alert('Refer & Earn will be active soon!')">
+            <div class="menu-icon">🎁</div>
+            <div class="menu-text">Refer & Earn Money</div>
+            <div class="menu-arrow">❯</div>
+        </a>
     </div>
 
-    <button class="logout-btn" onclick="logoutUser()">LOGOUT ACCOUNT</button>
+    <div class="activity-section">
+        <p class="menu-label">Recent Activity</p>
+        <div class="activity-list" id="recentActivity">
+            <div class="activity-item">
+                <div class="act-icon">✔</div>
+                <div class="act-info">
+                    <h4>Account Sync Success</h4>
+                    <p>Your data is secured with Firebase</p>
+                </div>
+            </div>
+            </div>
+    </div>
 
-    <div class="bottom-bar">
-        <a href="index.html" class="nav-link">🏠<br>Home</a>
-        <a href="add-money.html" class="nav-link">💳<br>Add Fund</a>
-        <a href="#" class="nav-link" onclick="alert('Coming Soon')">🎁<br>My Codes</a>
-        <a href="dashboard.html" class="nav-link" style="color: #f43f5e;">👤<br>Account</a>
+    <div class="logout-wrapper">
+        <button class="btn-logout" id="logoutBtn">LOGOUT ACCOUNT</button>
+        <p style="text-align: center; font-size: 10px; color: var(--text-muted); margin-top: 15px;">App Version 2.0.5 (Build 7468)</p>
+    </div>
+
+    <div class="bottom-nav">
+        <a href="index.html" class="nav-item"><i>🏠</i><span>Home</span></a>
+        <a href="shop.html" class="nav-item"><i>🛒</i><span>Shop</span></a>
+        <a href="add-money.html" class="nav-item"><i>💸</i><span>Deposit</span></a>
+        <a href="dashboard.html" class="nav-item active"><i>👤</i><span>Profile</span></a>
     </div>
 
     <script>
-        // Firebase Configuration
+        // --- Firebase Config ---
         const firebaseConfig = {
             apiKey: "AIzaSyBx8h5PYxI34ZTaHs9ScdA8puSBt6h8yYU",
             authDomain: "panelshop-71ed8.firebaseapp.com",
@@ -83,33 +274,57 @@
             appId: "1:741029675696:web:86331dc6ab82551d86f175"
         };
         firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
         const auth = firebase.auth();
+        const db = firebase.firestore();
 
-        // Check Auth State
+        // --- Data Loading Logic ---
         auth.onAuthStateChanged(user => {
             if (user) {
-                document.getElementById("email-display").innerText = user.email;
-                
-                // Fetch User Data from Firestore
+                // Set Email and Profile Name
+                document.getElementById('userEmail').innerText = user.email;
+                document.getElementById('userName').innerText = user.email.split('@')[0].toUpperCase();
+
+                // Fetch Stats from Firestore
                 db.collection("users").doc(user.uid).onSnapshot(doc => {
                     if (doc.exists) {
                         const data = doc.data();
-                        document.getElementById("balance-display").innerText = data.balance || 0;
-                        document.getElementById("spent-display").innerText = data.spent || 0;
+                        document.getElementById('dashBalance').innerText = (data.balance || 0).toFixed(2);
+                        document.getElementById('dashSpent').innerText = data.spent || 0;
+                        document.getElementById('dashOrders').innerText = data.totalOrders || 0;
                     }
+                    hideLoader();
                 });
+
+                // Load Recent Transactions (Optional)
+                loadRecentActivity(user.uid);
             } else {
                 window.location.href = 'login.html';
             }
         });
 
-        // Logout Function
-        function logoutUser() {
-            auth.signOut().then(() => {
-                window.location.href = 'login.html';
-            });
+        function loadRecentActivity(uid) {
+            // This is a placeholder for actual transaction logs
+            console.log("Activity loaded for:", uid);
         }
+
+        // --- Logout Function ---
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            if(confirm("Are you sure you want to logout?")) {
+                auth.signOut().then(() => {
+                    window.location.href = 'login.html';
+                });
+            }
+        });
+
+        function hideLoader() {
+            setTimeout(() => {
+                document.getElementById('dash-loader').style.opacity = '0';
+                setTimeout(() => document.getElementById('dash-loader').style.display = 'none', 500);
+            }, 800);
+        }
+
+        // Global Error Handle
+        window.onerror = () => hideLoader();
     </script>
 </body>
-</html>
+    </html>
