@@ -1,272 +1,971 @@
-
-        -<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Professional Payment Gateway | Secure Checkout</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Secure Deposit Portal | Automated System</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* === Premium Professional CSS === */
+        /* --- Root Variable Definition --- */
         :root {
-            --primary-bkash: #d12053;
-            --primary-nagad: #f37021;
-            --current-theme: #d12053;
-            --success: #00b894;
-            --error: #ff7675;
-            --bg-color: #f4f7f6;
-            --card-bg: #ffffff;
-            --text-dark: #2d3436;
-            --text-light: #636e72;
+            --primary: #4f46e5;
+            --primary-glow: rgba(79, 70, 229, 0.4);
+            --bkash: #d12053;
+            --nagad: #f37021;
+            --success: #10b981;
+            --danger: #ef4444;
+            --bg-deep: #05070a;
+            --card-bg: rgba(15, 23, 42, 0.8);
+            --border: rgba(255, 255, 255, 0.08);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --font-main: 'Montserrat', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-            min-height: 100vh; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            padding: 20px;
+        /* --- Full Reset --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        body {
+            background-color: var(--bg-deep);
+            font-family: var(--font-main);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(79, 70, 229, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(209, 32, 83, 0.05) 0%, transparent 40%);
         }
 
-        .payment-wrapper {
+        /* --- Background Animation Elements --- */
+        .grid-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: -1;
+        }
+
+        /* --- Main Payment Container --- */
+        .deposit-wrapper {
             width: 100%;
-            max-width: 500px;
+            max-width: 520px;
+            padding: 20px;
+            perspective: 1000px;
+        }
+
+        .premium-card {
             background: var(--card-bg);
-            border-radius: 24px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 32px;
+            padding: 45px 35px;
+            box-shadow: 0 50px 100px -20px rgba(0,0,0,0.5);
+            animation: cardEntrance 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+            position: relative;
             overflow: hidden;
-            animation: slideUp 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
 
-        @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes cardEntrance {
+            0% { opacity: 0; transform: translateY(50px) rotateX(-10deg); }
+            100% { opacity: 1; transform: translateY(0) rotateX(0); }
+        }
 
-        /* Header Design */
-        .card-header { padding: 35px 20px; text-align: center; background: #fff; border-bottom: 1px solid #eee; }
-        .card-header h2 { font-family: 'Poppins', sans-serif; font-size: 26px; color: var(--text-dark); letter-spacing: -0.5px; }
-        .card-header p { font-size: 14px; color: var(--text-light); margin-top: 5px; }
+        /* --- Header & Navigation --- */
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
 
-        /* Method Tabs */
-        .tabs { display: flex; padding: 15px 25px; gap: 12px; }
-        .tab { 
-            flex: 1; padding: 12px; border: 2px solid #f1f2f6; border-radius: 12px; 
-            cursor: pointer; text-align: center; font-weight: 600; font-size: 14px;
+        .btn-return {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            padding: 10px 18px;
+            border-radius: 14px;
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 700;
             transition: all 0.3s ease;
-        }
-        .tab.active[data-m="bkash"] { border-color: var(--primary-bkash); background: #fff0f3; color: var(--primary-bkash); }
-        .tab.active[data-m="nagad"] { border-color: var(--primary-nagad); background: #fff5f0; color: var(--primary-nagad); }
-
-        /* Payment Details Card */
-        .details-panel { 
-            margin: 0 25px 25px; background: #f9fbfd; border: 1px solid #e1e8ed; 
-            border-radius: 18px; padding: 20px; 
-        }
-        .detail-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        .detail-row span { font-size: 13px; color: var(--text-light); }
-        .detail-row strong { font-size: 17px; color: var(--text-dark); letter-spacing: 0.5px; }
-        
-        .number-badge { 
-            background: #fff; border: 1px solid #d1d8e0; padding: 5px 12px; 
-            border-radius: 8px; font-weight: 700; color: var(--current-theme);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        /* Instructions */
-        .steps { padding: 0 25px 25px; font-size: 13px; color: #57606f; line-height: 1.6; }
-        .steps ul { list-style: none; }
-        .steps li::before { content: "✓"; color: var(--success); font-weight: bold; margin-right: 8px; }
-
-        /* Input Form */
-        .form-area { padding: 0 25px 35px; }
-        .input-group { position: relative; margin-bottom: 20px; }
-        .input-group label { display: block; font-size: 13px; font-weight: 600; color: var(--text-dark); margin-bottom: 8px; }
-        input { 
-            width: 100%; padding: 16px; border: 2px solid #e1e8ed; border-radius: 12px; 
-            font-size: 16px; font-weight: 600; transition: all 0.3s;
-        }
-        input:focus { border-color: var(--current-theme); outline: none; box-shadow: 0 0 15px rgba(0,0,0,0.05); }
-
-        /* Action Button */
-        .btn-verify { 
-            width: 100%; padding: 18px; background: var(--current-theme); 
-            color: white; border: none; border-radius: 12px; font-size: 17px; 
-            font-weight: 700; cursor: pointer; transition: 0.4s;
-            box-shadow: 0 10px 20px -5px rgba(0,0,0,0.2);
-        }
-        .btn-verify:hover { transform: translateY(-3px); box-shadow: 0 15px 30px -10px rgba(0,0,0,0.3); }
-        .btn-verify:disabled { background: #cbd5e0; cursor: not-allowed; transform: none; }
-
-        /* Status Alerts */
-        #status-msg { 
-            margin-top: 20px; padding: 15px; border-radius: 12px; 
-            font-size: 14px; font-weight: 600; display: none; text-align: center;
+        .btn-return:hover {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            transform: translateX(-3px);
+            border-color: rgba(255,255,255,0.2);
         }
 
-        /* Loader Animation */
+        .badge-secure {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: var(--success);
+            padding: 6px 12px;
+            border-radius: 100px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* --- Display Section --- */
+        .hero-section {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .hero-section h1 {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 8px;
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-section p {
+            color: var(--text-dim);
+            font-size: 14px;
+        }
+
+        .number-box {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 30px;
+            margin-bottom: 35px;
+            text-align: center;
+            transition: 0.3s ease;
+            position: relative;
+        }
+
+        .number-box:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 30px var(--primary-glow);
+        }
+
+        .number-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .main-phone {
+            font-family: var(--font-mono);
+            font-size: 32px;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 2px;
+            cursor: pointer;
+        }
+
+        .method-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .indicator {
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+
+        /* --- Input Styles --- */
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-dim);
+            padding-left: 5px;
+        }
+
+        .input-container {
+            position: relative;
+        }
+
+        .input-container i {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+            font-size: 20px;
+        }
+
+        input {
+            width: 100%;
+            background: rgba(255,255,255,0.03);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            padding: 20px 20px 20px 55px;
+            color: #fff;
+            font-family: var(--font-mono);
+            font-size: 18px;
+            transition: 0.4s;
+        }
+
+        input:focus {
+            background: rgba(255,255,255,0.07);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 5px var(--primary-glow);
+        }
+
+        /* --- Action Button --- */
+        .btn-submit {
+            width: 100%;
+            padding: 22px;
+            border: none;
+            border-radius: 20px;
+            background: linear-gradient(135deg, var(--primary), #6366f1);
+            color: #fff;
+            font-size: 17px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 20px 40px -10px var(--primary-glow);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px -10px var(--primary-glow);
+            filter: brightness(1.1);
+        }
+
+        .btn-submit:active {
+            transform: translateY(2px);
+        }
+
+        .btn-submit:disabled {
+            background: #1e293b;
+            color: #475569;
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* --- Custom Notification System --- */
+        .toast-system {
+            margin-top: 30px;
+            border-radius: 16px;
+            padding: 18px;
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+            display: none;
+            animation: slideDown 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+        }
+
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } }
+
+        /* --- Footer Icons --- */
+        .footer-secure {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 25px;
+            margin-top: 40px;
+            opacity: 0.3;
+        }
+
+        .footer-secure i { font-size: 24px; }
+
+        /* --- Loader Animation --- */
         .spinner {
-            width: 20px; height: 20px; border: 3px solid #ffffff44; border-top: 3px solid #fff;
-            border-radius: 50%; animation: spin 0.8s linear infinite; display: inline-block;
-            margin-right: 10px; vertical-align: middle;
+            width: 22px;
+            height: 22px;
+            border: 3px solid rgba(255,255,255,0.2);
+            border-top: 3px solid #fff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
     </style>
 </head>
 <body>
 
-<div class="payment-wrapper">
-    <div class="card-header">
-        <h2>Add Funds</h2>
-        <p>Verified Automatic Payment System</p>
-    </div>
+    <div class="grid-bg"></div>
 
-    <div class="tabs">
-        <div class="tab active" data-m="bkash" onclick="setMode('bkash')">bKash</div>
-        <div class="tab" data-m="nagad" onclick="setMode('nagad')">Nagad</div>
-    </div>
+    <div class="deposit-wrapper">
+        <div class="premium-card">
+            
+            <div class="top-nav">
+                <a href="index.html" class="btn-return">
+                    <i class="fas fa-chevron-left"></i> BACK HOME
+                </a>
+                <div class="badge-secure">
+                    <i class="fas fa-lock"></i> SECURE
+                </div>
+            </div>
 
-    <div class="details-panel">
-        <div class="detail-row">
-            <span>Payment Method</span>
-            <strong id="displayMethod">bKash Send Money</strong>
+            <div class="hero-section">
+                <h1>Add Balance</h1>
+                <p>Verify your transaction instantly</p>
+            </div>
+
+            <div class="number-box">
+                <span class="number-label">Send Money To (Personal)</span>
+                <div class="main-phone">01992170327</div>
+                <div class="method-indicators">
+                    <span class="indicator" style="background: rgba(209, 32, 83, 0.1); color: var(--bkash);">BKASH</span>
+                    <span class="indicator" style="background: rgba(243, 112, 33, 0.1); color: var(--nagad);">NAGAD</span>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="trxID">Enter Transaction ID (TrxID)</label>
+                <div class="input-container">
+                    <i class="fas fa-fingerprint"></i>
+                    <input type="text" id="trxID" placeholder="BKX928374H" spellcheck="false" autocomplete="off">
+                </div>
+            </div>
+
+            <button class="btn-submit" id="mainButton" onclick="initiateVerification()">
+                <span id="btnText">VERIFY NOW</span>
+                <i class="fas fa-bolt" id="btnIcon"></i>
+            </button>
+
+            <div id="toast" class="toast-system"></div>
+
+            <div class="footer-secure">
+                <i class="fab fa-stripe"></i>
+                <i class="fab fa-cc-visa"></i>
+                <i class="fab fa-cc-mastercard"></i>
+                <i class="fas fa-shield-alt"></i>
+            </div>
         </div>
-        <div class="detail-row">
-            <span>Target Number</span>
-            <strong class="number-badge">01992170327</strong>
-        </div>
-        <div class="detail-row">
-            <span>Status</span>
-            <span style="color:var(--success); font-weight:700;">● Online</span>
-        </div>
     </div>
 
-    <div class="steps">
-        <ul>
-            <li>Send any amount to the number above.</li>
-            <li>Copy the Transaction ID (TrxID) from SMS.</li>
-            <li>Enter it below to add balance instantly.</li>
-        </ul>
-    </div>
+    <script>
+        // Configuration
+        const DB_ENDPOINT = "https://panelshop-71ed8-default-rtdb.firebaseio.com/sms_logs.json";
 
-    <div class="form-area">
-        <div class="input-group">
-            <label>Transaction ID (TrxID)</label>
-            <input type="text" id="trxID" placeholder="Ex: BKX203948H" spellcheck="false" autocomplete="off">
-        </div>
+        async function initiateVerification() {
+            const inputVal = document.getElementById('trxID').value.trim();
+            const btn = document.getElementById('mainButton');
+            const btnText = document.getElementById('btnText');
+            const btnIcon = document.getElementById('btnIcon');
+            const toast = document.getElementById('toast');
 
-        <button class="btn-verify" id="verifyBtn" onclick="handleVerification()">
-            <span id="btnLabel">Verify Transaction</span>
-        </button>
+            // 1. Validation Logic
+            if (inputVal.length < 5) {
+                notify("Please enter a valid Transaction ID", "danger");
+                return;
+            }
 
-        <div id="status-msg"></div>
-    </div>
-</div>
+            // 2. Loading State
+            btn.disabled = true;
+            btnText.innerText = "QUERYING SYSTEM...";
+            btnIcon.className = "spinner";
+            toast.style.display = "none";
 
-<script>
-    const FIREBASE_DB = "https://panelshop-71ed8-default-rtdb.firebaseio.com/sms_logs.json";
-    let activeMethod = 'bkash';
+            try {
+                // 3. Database Fetching
+                const response = await fetch(DB_ENDPOINT);
+                const smsLogs = await response.json();
 
-    function setMode(m) {
-        activeMethod = m;
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelector(`.tab[data-m="${m}"]`).classList.add('active');
-        
-        const root = document.documentElement;
-        const display = document.getElementById('displayMethod');
-        
-        if(m === 'bkash') {
-            root.style.setProperty('--current-theme', '#d12053');
-            display.innerText = "bKash Send Money";
-        } else {
-            root.style.setProperty('--current-theme', '#f37021');
-            display.innerText = "Nagad Send Money";
-        }
-    }
+                let foundKey = null;
 
-    async function handleVerification() {
-        const trx = document.getElementById('trxID').value.trim();
-        const btn = document.getElementById('verifyBtn');
-        const label = document.getElementById('btnLabel');
-        const status = document.getElementById('status-msg');
-
-        if(trx.length < 5) {
-            updateUI("Please enter a valid TrxID", "error");
-            return;
-        }
-
-        btn.disabled = true;
-        label.innerHTML = '<div class="spinner"></div> Verifying...';
-        status.style.display = "none";
-
-        try {
-            const response = await fetch(FIREBASE_DB);
-            const logs = await response.json();
-
-            let foundKey = null;
-
-            for (let key in logs) {
-                const log = logs[key];
-                // Security Check: ID match & Not used before
-                if (log.content.toUpperCase().includes(trx.toUpperCase()) && !log.isUsed) {
-                    foundKey = key;
-                    break;
+                // 4. Advanced Matching Algorithm (Case-Insensitive)
+                for (let key in smsLogs) {
+                    const sms = smsLogs[key];
+                    if (sms.content.toUpperCase().includes(inputVal.toUpperCase()) && !sms.isUsed) {
+                        foundKey = key;
+                        break;
+                    }
                 }
-            }
 
-            if (foundKey) {
-                // Success Procedure
-                await secureUpdate(foundKey);
-                confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 }, colors: ['#00b894', '#d12053', '#f37021'] });
-                updateUI("Payment Successful! Balance added.", "success");
-                
-                // Redirect user after 3 seconds
-                setTimeout(() => { window.location.href = "dashboard.html"; }, 3000);
+                if (foundKey) {
+                    // 5. Success Flow
+                    await finalizeRecord(foundKey);
+                    
+                    // Confetti Explosion
+                    confetti({
+                        particleCount: 250,
+                        spread: 100,
+                        origin: { y: 0.6 },
+                        colors: ['#4f46e5', '#10b981', '#ffffff']
+                    });
+
+                    notify("PAYMENT SUCCESS! REDIRECTING IN 3S...", "success");
+
+                    // 6. REDIRECTION (As per user request)
+                    setTimeout(() => {
+                        window.location.href = "dashboard.html";
+                    }, 3500);
+
+                } else {
+                    // 7. Error Handling
+                    notify("TRXID NOT FOUND OR ALREADY USED", "danger");
+                    resetBtn();
+                }
+
+            } catch (err) {
+                notify("CONNECTION ERROR! CHECK INTERNET", "danger");
+                resetBtn();
+            }
+        }
+
+        async function finalizeRecord(id) {
+            const updateUrl = `https://panelshop-71ed8-default-rtdb.firebaseio.com/sms_logs/${id}.json`;
+            await fetch(updateUrl, {
+                method: 'PATCH',
+                body: JSON.stringify({ 
+                    isUsed: true, 
+                    claimTime: new Date().toISOString() 
+                })
+            });
+        }
+
+        function notify(msg, type) {
+            const toast = document.getElementById('toast');
+            toast.style.display = "block";
+            toast.innerText = msg;
+            
+            if (type === "success") {
+                toast.style.background = "rgba(16, 185, 129, 0.1)";
+                toast.style.color = "#10b981";
+                toast.style.border = "1px solid rgba(16, 185, 129, 0.2)";
             } else {
-                updateUI("Invalid Transaction ID or Not Processed yet.", "error");
+                toast.style.background = "rgba(239, 68, 68, 0.1)";
+                toast.style.color = "#ef4444";
+                toast.style.border = "1px solid rgba(239, 68, 68, 0.2)";
+            }
+        }
+
+        function resetBtn() {
+            const btn = document.getElementById('mainButton');
+            const btnText = document.getElementById('btnText');
+            const btnIcon = document.getElementById('btnIcon');
+            btn.disabled = false;
+            btnText.innerText = "VERIFY NOW";
+            btnIcon.className = "fas fa-bolt";
+        }
+    </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Secure Deposit Portal | Automated System</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- Root Variable Definition --- */
+        :root {
+            --primary: #4f46e5;
+            --primary-glow: rgba(79, 70, 229, 0.4);
+            --bkash: #d12053;
+            --nagad: #f37021;
+            --success: #10b981;
+            --danger: #ef4444;
+            --bg-deep: #05070a;
+            --card-bg: rgba(15, 23, 42, 0.8);
+            --border: rgba(255, 255, 255, 0.08);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --font-main: 'Montserrat', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        /* --- Full Reset --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            font-family: var(--font-main);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(79, 70, 229, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(209, 32, 83, 0.05) 0%, transparent 40%);
+        }
+
+        /* --- Background Animation Elements --- */
+        .grid-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: -1;
+        }
+
+        /* --- Main Payment Container --- */
+        .deposit-wrapper {
+            width: 100%;
+            max-width: 520px;
+            padding: 20px;
+            perspective: 1000px;
+        }
+
+        .premium-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 32px;
+            padding: 45px 35px;
+            box-shadow: 0 50px 100px -20px rgba(0,0,0,0.5);
+            animation: cardEntrance 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes cardEntrance {
+            0% { opacity: 0; transform: translateY(50px) rotateX(-10deg); }
+            100% { opacity: 1; transform: translateY(0) rotateX(0); }
+        }
+
+        /* --- Header & Navigation --- */
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .btn-return {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            padding: 10px 18px;
+            border-radius: 14px;
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-return:hover {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            transform: translateX(-3px);
+            border-color: rgba(255,255,255,0.2);
+        }
+
+        .badge-secure {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: var(--success);
+            padding: 6px 12px;
+            border-radius: 100px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* --- Display Section --- */
+        .hero-section {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .hero-section h1 {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 8px;
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-section p {
+            color: var(--text-dim);
+            font-size: 14px;
+        }
+
+        .number-box {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 30px;
+            margin-bottom: 35px;
+            text-align: center;
+            transition: 0.3s ease;
+            position: relative;
+        }
+
+        .number-box:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 30px var(--primary-glow);
+        }
+
+        .number-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .main-phone {
+            font-family: var(--font-mono);
+            font-size: 32px;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 2px;
+            cursor: pointer;
+        }
+
+        .method-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .indicator {
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+
+        /* --- Input Styles --- */
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-dim);
+            padding-left: 5px;
+        }
+
+        .input-container {
+            position: relative;
+        }
+
+        .input-container i {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+            font-size: 20px;
+        }
+
+        input {
+            width: 100%;
+            background: rgba(255,255,255,0.03);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            padding: 20px 20px 20px 55px;
+            color: #fff;
+            font-family: var(--font-mono);
+            font-size: 18px;
+            transition: 0.4s;
+        }
+
+        input:focus {
+            background: rgba(255,255,255,0.07);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 5px var(--primary-glow);
+        }
+
+        /* --- Action Button --- */
+        .btn-submit {
+            width: 100%;
+            padding: 22px;
+            border: none;
+            border-radius: 20px;
+            background: linear-gradient(135deg, var(--primary), #6366f1);
+            color: #fff;
+            font-size: 17px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 20px 40px -10px var(--primary-glow);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px -10px var(--primary-glow);
+            filter: brightness(1.1);
+        }
+
+        .btn-submit:active {
+            transform: translateY(2px);
+        }
+
+        .btn-submit:disabled {
+            background: #1e293b;
+            color: #475569;
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* --- Custom Notification System --- */
+        .toast-system {
+            margin-top: 30px;
+            border-radius: 16px;
+            padding: 18px;
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+            display: none;
+            animation: slideDown 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+        }
+
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } }
+
+        /* --- Footer Icons --- */
+        .footer-secure {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 25px;
+            margin-top: 40px;
+            opacity: 0.3;
+        }
+
+        .footer-secure i { font-size: 24px; }
+
+        /* --- Loader Animation --- */
+        .spinner {
+            width: 22px;
+            height: 22px;
+            border: 3px solid rgba(255,255,255,0.2);
+            border-top: 3px solid #fff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+    </style>
+</head>
+<body>
+
+    <div class="grid-bg"></div>
+
+    <div class="deposit-wrapper">
+        <div class="premium-card">
+            
+            <div class="top-nav">
+                <a href="index.html" class="btn-return">
+                    <i class="fas fa-chevron-left"></i> BACK HOME
+                </a>
+                <div class="badge-secure">
+                    <i class="fas fa-lock"></i> SECURE
+                </div>
+            </div>
+
+            <div class="hero-section">
+                <h1>Add Balance</h1>
+                <p>Verify your transaction instantly</p>
+            </div>
+
+            <div class="number-box">
+                <span class="number-label">Send Money To (Personal)</span>
+                <div class="main-phone">01992170327</div>
+                <div class="method-indicators">
+                    <span class="indicator" style="background: rgba(209, 32, 83, 0.1); color: var(--bkash);">BKASH</span>
+                    <span class="indicator" style="background: rgba(243, 112, 33, 0.1); color: var(--nagad);">NAGAD</span>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="trxID">Enter Transaction ID (TrxID)</label>
+                <div class="input-container">
+                    <i class="fas fa-fingerprint"></i>
+                    <input type="text" id="trxID" placeholder="BKX928374H" spellcheck="false" autocomplete="off">
+                </div>
+            </div>
+
+            <button class="btn-submit" id="mainButton" onclick="initiateVerification()">
+                <span id="btnText">VERIFY NOW</span>
+                <i class="fas fa-bolt" id="btnIcon"></i>
+            </button>
+
+            <div id="toast" class="toast-system"></div>
+
+            <div class="footer-secure">
+                <i class="fab fa-stripe"></i>
+                <i class="fab fa-cc-visa"></i>
+                <i class="fab fa-cc-mastercard"></i>
+                <i class="fas fa-shield-alt"></i>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const DB_ENDPOINT = "https://panelshop-71ed8-default-rtdb.firebaseio.com/sms_logs.json";
+
+        async function initiateVerification() {
+            const inputVal = document.getElementById('trxID').value.trim();
+            const btn = document.getElementById('mainButton');
+            const btnText = document.getElementById('btnText');
+            const btnIcon = document.getElementById('btnIcon');
+            const toast = document.getElementById('toast');
+
+            // 1. Validation Logic
+            if (inputVal.length < 5) {
+                notify("Please enter a valid Transaction ID", "danger");
+                return;
             }
 
-        } catch (err) {
-            updateUI("Server busy. Please try again later.", "error");
-        } finally {
+            // 2. Loading State
+            btn.disabled = true;
+            btnText.innerText = "QUERYING SYSTEM...";
+            btnIcon.className = "spinner";
+            toast.style.display = "none";
+
+            try {
+                // 3. Database Fetching
+                const response = await fetch(DB_ENDPOINT);
+                const smsLogs = await response.json();
+
+                let foundKey = null;
+
+                // 4. Advanced Matching Algorithm (Case-Insensitive)
+                for (let key in smsLogs) {
+                    const sms = smsLogs[key];
+                    if (sms.content.toUpperCase().includes(inputVal.toUpperCase()) && !sms.isUsed) {
+                        foundKey = key;
+                        break;
+                    }
+                }
+
+                if (foundKey) {
+                    // 5. Success Flow
+                    await finalizeRecord(foundKey);
+                    
+                    // Confetti Explosion
+                    confetti({
+                        particleCount: 250,
+                        spread: 100,
+                        origin: { y: 0.6 },
+                        colors: ['#4f46e5', '#10b981', '#ffffff']
+                    });
+
+                    notify("PAYMENT SUCCESS! REDIRECTING IN 3S...", "success");
+
+                    // 6. REDIRECTION (As per user request)
+                    setTimeout(() => {
+                        window.location.href = "dashboard.html";
+                    }, 3500);
+
+                } else {
+                    // 7. Error Handling
+                    notify("TRXID NOT FOUND OR ALREADY USED", "danger");
+                    resetBtn();
+                }
+
+            } catch (err) {
+                notify("CONNECTION ERROR! CHECK INTERNET", "danger");
+                resetBtn();
+            }
+        }
+
+        async function finalizeRecord(id) {
+            const updateUrl = `https://panelshop-71ed8-default-rtdb.firebaseio.com/sms_logs/${id}.json`;
+            await fetch(updateUrl, {
+                method: 'PATCH',
+                body: JSON.stringify({ 
+                    isUsed: true, 
+                    claimTime: new Date().toISOString() 
+                })
+            });
+        }
+
+        function notify(msg, type) {
+            const toast = document.getElementById('toast');
+            toast.style.display = "block";
+            toast.innerText = msg;
+            
+            if (type === "success") {
+                toast.style.background = "rgba(16, 185, 129, 0.1)";
+                toast.style.color = "#10b981";
+                toast.style.border = "1px solid rgba(16, 185, 129, 0.2)";
+            } else {
+                toast.style.background = "rgba(239, 68, 68, 0.1)";
+                toast.style.color = "#ef4444";
+                toast.style.border = "1px solid rgba(239, 68, 68, 0.2)";
+            }
+        }
+
+        function resetBtn() {
+            const btn = document.getElementById('mainButton');
+            const btnText = document.getElementById('btnText');
+            const btnIcon = document.getElementById('btnIcon');
             btn.disabled = false;
-            label.innerText = "Verify Transaction";
+            btnText.innerText = "VERIFY NOW";
+            btnIcon.className = "fas fa-bolt";
         }
-    }
-
-    async function secureUpdate(key) {
-        const patchURL = `https://panelshop-71ed8-default-rtdb.firebaseio.com/sms_logs/${key}.json`;
-        await fetch(patchURL, {
-            method: 'PATCH',
-            body: JSON.stringify({ isUsed: true, claimDate: new Date().toLocaleString() })
-        });
-    }
-
-    function updateUI(msg, type) {
-        const box = document.getElementById('status-msg');
-        box.style.display = "block";
-        box.innerText = msg;
-        if(type === 'success') {
-            box.style.background = "#e6fffb";
-            box.style.color = "#00b894";
-            box.style.border = "1px solid #00b894";
-        } else {
-            box.style.background = "#fff1f0";
-            box.style.color = "#ff4d4f";
-            box.style.border = "1px solid #ff4d4f";
-        }
-    }
-</script>
-
+    </script>
 </body>
-</html>
+</ht
