@@ -242,9 +242,17 @@
             showLoader(true);
 
             try {
-                await auth.signInWithEmailAndPassword(email, pass);
-                window.location.href = 'index.html';
-            } catch (err) {
+                        await auth.signInWithEmailAndPassword(email, pass);
+        
+        // --- এই অংশটুকু নতুন যোগ করবেন ---
+        const user = auth.currentUser;
+        if (user) {
+            localStorage.setItem("userId", user.uid);
+        }
+        // --------------------------------
+        
+        window.location.href = 'index.html';
+
                 showError(err.message);
                 showLoader(false);
             }
