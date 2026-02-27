@@ -1,211 +1,145 @@
-<!DOCTYPE html>
+        <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure Login | Panel Shop Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Auto Recharge | Premium Panel</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Oxanium:wght@300;600;800&family=Poppins:wght@300;400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Oxanium:wght@400;700;800&family=Poppins:wght@300;400;600&display=swap');
 
         :root {
             --primary: #f43f5e;
-            --primary-glow: rgba(244, 63, 94, 0.4);
-            --bg-dark: #0f172a;
-            --glass-bg: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
+            --dark: #0f172a;
+            --success: #22c55e;
+            --warning: #f59e0b;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: #f1f5f9; color: var(--dark); padding-bottom: 80px; }
 
-        body {
-            background: var(--bg-dark);
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            color: white;
+        /* --- Header --- */
+        .header {
+            background: linear-gradient(135deg, var(--dark) 0%, #1e293b 100%);
+            color: white; padding: 40px 20px; text-align: center;
+            border-bottom-left-radius: 30px; border-bottom-right-radius: 30px;
         }
+        .header h1 { font-family: 'Oxanium'; font-size: 26px; }
 
-        /* --- Animated Background --- */
-        .bg-animate {
-            position: absolute; width: 100%; height: 100%;
-            background: radial-gradient(circle at 50% 50%, #1e293b 0%, #0f172a 100%);
-            z-index: -1;
+        .balance-box {
+            background: white; margin: -20px 25px 25px; padding: 20px;
+            border-radius: 20px; display: flex; justify-content: space-between;
+            align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
-        .circle {
-            position: absolute; border-radius: 50%;
-            background: var(--primary);
-            filter: blur(80px);
-            opacity: 0.2;
-            animation: move 20s infinite alternate;
-        }
-        @keyframes move {
-            from { transform: translate(-50%, -50%); }
-            to { transform: translate(50%, 50%); }
-        }
+        .balance-amount { font-family: 'Oxanium'; font-size: 22px; font-weight: 800; color: var(--primary); }
 
-        /* --- Login Container --- */
-        .container {
-            width: 90%; max-width: 400px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            padding: 40px 30px;
-            border-radius: 30px;
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-            text-align: center;
-            animation: slideUp 0.8s ease;
+        /* --- Payment Selection --- */
+        .method-container { padding: 0 25px; margin-bottom: 25px; }
+        .method-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
+        .method-card {
+            background: white; padding: 15px 5px; border-radius: 15px; text-align: center;
+            cursor: pointer; border: 2px solid transparent; transition: 0.3s;
         }
+        .method-card.active { border-color: var(--primary); transform: scale(1.05); }
+        .method-card img { width: 45px; height: 45px; margin-bottom: 5px; border-radius: 10px; }
 
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(50px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        /* --- Input Box --- */
+        .payment-form { margin: 0 25px; background: white; padding: 25px; border-radius: 20px; display: none; animation: slideUp 0.5s ease; }
+        .payment-form.active { display: block; }
 
-        .logo {
-            font-family: 'Oxanium';
-            font-size: 30px; font-weight: 800;
-            color: var(--primary);
-            margin-bottom: 10px;
-            letter-spacing: 2px;
-            text-shadow: 0 0 15px var(--primary-glow);
-        }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        .subtitle { font-size: 12px; color: #94a3b8; margin-bottom: 30px; }
-
-        /* --- Input Styles --- */
-        .input-group { position: relative; margin-bottom: 20px; text-align: left; }
-        .input-group label { display: block; font-size: 11px; color: var(--primary); font-weight: 700; margin-bottom: 8px; text-transform: uppercase; }
-        
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 5px; color: #64748b; }
         input {
-            width: 100%;
-            padding: 14px 20px;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            color: white;
-            font-size: 14px;
-            outline: none;
-            transition: 0.3s;
+            width: 100%; padding: 12px 15px; border: 1px solid #e2e8f0;
+            border-radius: 12px; font-size: 15px; outline: none; transition: 0.3s;
         }
-        input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 10px var(--primary-glow);
-            background: rgba(255,255,255,0.1);
-        }
+        input:focus { border-color: var(--primary); }
 
-        /* --- Buttons --- */
-        .btn {
-            width: 100%;
-            padding: 15px;
-            border: none;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 800;
-            cursor: pointer;
-            transition: 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-top: 10px;
+        .btn-verify {
+            width: 100%; background: var(--dark); color: white; border: none;
+            padding: 15px; border-radius: 12px; font-weight: 800; font-family: 'Oxanium';
+            cursor: pointer; transition: 0.3s;
         }
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-            box-shadow: 0 10px 20px var(--primary-glow);
-        }
-        .btn-primary:active { transform: scale(0.95); }
+        .btn-verify:hover { background: var(--primary); }
 
-        /* --- Toggle Section --- */
-        .toggle-text { margin-top: 25px; font-size: 13px; color: #94a3b8; }
-        .toggle-link { color: var(--primary); font-weight: 700; cursor: pointer; text-decoration: none; }
+        .status-msg { font-size: 12px; text-align: center; margin-top: 15px; padding: 10px; border-radius: 8px; display: none; }
 
-        /* --- Loading Overly --- */
-        #loader {
-            display: none;
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.9);
-            border-radius: 30px;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 10;
+        /* --- Bottom Nav --- */
+        .bottom-nav {
+            position: fixed; bottom: 0; width: 100%; height: 70px; background: white;
+            display: flex; justify-content: space-around; align-items: center;
+            border-top: 1px solid #ddd;
         }
-        .spinner {
-            width: 40px; height: 40px;
-            border: 4px solid rgba(255,255,255,0.1);
-            border-top: 4px solid var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* Error Message */
-        #error-msg {
-            color: #ff4b4b;
-            font-size: 11px;
-            margin-bottom: 15px;
-            display: none;
-            background: rgba(255, 75, 75, 0.1);
-            padding: 8px;
-            border-radius: 8px;
-        }
+        .nav-item { text-decoration: none; color: #94a3b8; text-align: center; font-size: 11px; }
+        .nav-item.active { color: var(--primary); }
     </style>
 </head>
 <body>
 
-    <div class="bg-animate">
-        <div class="circle" style="width: 300px; height: 300px; top: 10%; left: 10%;"></div>
-        <div class="circle" style="width: 400px; height: 400px; bottom: 10%; right: 10%;"></div>
+    <div class="header">
+        <h1>AUTO ADD MONEY</h1>
+        <p>ব্যালেন্স সাথে সাথে অ্যাড হয়ে যাবে</p>
     </div>
 
-    <div class="container">
-        <div id="loader">
-            <div class="spinner"></div>
-            <p style="margin-top: 15px; font-size: 12px;">Authenticating...</p>
+    <div class="balance-box">
+        <div><p style="font-size: 12px; color: #64748b;">আপনার ব্যালেন্স</p></div>
+        <div class="balance-amount">৳ <span id="user-balance">0.00</span></div>
+    </div>
+
+    <div class="method-container">
+        <h3>পেমেন্ট মেথড সিলেক্ট করুন</h3>
+        <div class="method-grid">
+            <div class="method-card" onclick="selectMethod('bkash', '017XXXXXXXX')">
+                <img src="https://i.ibb.co/S6mFvY6/bkash.png">
+                <p style="font-size: 11px; font-weight: 700;">bKash</p>
+            </div>
+            <div class="method-card" onclick="selectMethod('nagad', '018XXXXXXXX')">
+                <img src="https://i.ibb.co/By9Xz1N/nagad.png">
+                <p style="font-size: 11px; font-weight: 700;">Nagad</p>
+            </div>
+            <div class="method-card" onclick="selectMethod('rocket', '019XXXXXXXX')">
+                <img src="https://i.ibb.co/p33mS85/rocket.png">
+                <p style="font-size: 11px; font-weight: 700;">Rocket</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="payment-form" id="pay-box">
+        <div style="background: #f8fafc; padding: 15px; border-radius: 12px; margin-bottom: 20px; border-left: 4px solid var(--primary);">
+            <p style="font-size: 11px; color: #64748b;">আমাদের পার্সোনাল নাম্বার:</p>
+            <h2 id="admin-num" style="font-family: 'Oxanium'; letter-spacing: 1px;">01XXXXXXXXX</h2>
+            <p style="font-size: 10px; color: var(--primary); margin-top: 5px;">* Send Money করার পর TrxID নিচে দিন।</p>
         </div>
 
-        <div class="logo">PANEL SHOP</div>
-        <p class="subtitle" id="form-subtitle">Login to access your premium dashboard</p>
-
-        <div id="error-msg">Error: Invalid Credentials</div>
-
-        <div id="login-form">
-            <div class="input-group">
-                <label>Email Address</label>
-                <input type="email" id="login-email" placeholder="Enter your email">
-            </div>
-            <div class="input-group">
-                <label>Password</label>
-                <input type="password" id="login-password" placeholder="••••••••">
-            </div>
-            <button class="btn btn-primary" onclick="handleLogin()">Login Account</button>
-            <p class="toggle-text">Don't have an account? <span class="toggle-link" onclick="toggleForm('signup')">Sign Up</span></p>
+        <div class="input-group">
+            <label>টাকার পরিমাণ (Amount)</label>
+            <input type="number" id="pay-amount" placeholder="Min 100 TK">
         </div>
 
-        <div id="signup-form" style="display: none;">
-            <div class="input-group">
-                <label>Email Address</label>
-                <input type="email" id="signup-email" placeholder="Enter your email">
-            </div>
-            <div class="input-group">
-                <label>Create Password</label>
-                <input type="password" id="signup-password" placeholder="Min 6 characters">
-            </div>
-            <button class="btn btn-primary" onclick="handleSignup()">Create Account</button>
-            <p class="toggle-text">Already have an account? <span class="toggle-link" onclick="toggleForm('login')">Login</span></p>
+        <div class="input-group">
+            <label>ট্রানজেকশন আইডি (Transaction ID)</label>
+            <input type="text" id="pay-trxid" placeholder="যেমন: BKC53H82LS">
         </div>
 
+        <button class="btn-verify" id="submit-btn" onclick="verifyAutoPayment()">VERIFY & ADD MONEY</button>
+        
+        <div id="status-display" class="status-msg"></div>
+    </div>
+
+    <div class="bottom-nav">
+        <a href="index.html" class="nav-item">🏠<br>Home</a>
+        <a href="shop.html" class="nav-item">🛒<br>Shop</a>
+        <a href="add-money.html" class="nav-item active">💳<br>Add Money</a>
     </div>
 
     <script>
-        // --- Firebase Configuration ---
+        // --- FIREBASE CONFIG ---
         const firebaseConfig = {
             apiKey: "AIzaSyBx8h5PYxI34ZTaHs9ScdA8puSBt6h8yYU",
             authDomain: "panelshop-71ed8.firebaseapp.com",
@@ -215,78 +149,93 @@
             appId: "1:741029675696:web:86331dc6ab82551d86f175"
         };
         firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
         const db = firebase.firestore();
+        const auth = firebase.auth();
 
-        // --- Toggle Form Logic ---
-        function toggleForm(type) {
-            const loginF = document.getElementById('login-form');
-            const signupF = document.getElementById('signup-form');
-            const subtitle = document.getElementById('form-subtitle');
-            
-            if(type === 'signup') {
-                loginF.style.display = 'none';
-                signupF.style.display = 'block';
-                subtitle.innerText = "Join us and get the best gaming services";
-            } else {
-                loginF.style.display = 'block';
-                signupF.style.display = 'none';
-                subtitle.innerText = "Login to access your premium dashboard";
-            }
-        }
+        let currentUid = "";
 
-        // --- Login Logic ---
-        async function handleLogin() {
-            const email = document.getElementById('login-email').value;
-            const pass = document.getElementById('login-password').value;
-            showLoader(true);
-
-            try {
-                await auth.signInWithEmailAndPassword(email, pass);
-                window.location.href = 'index.html';
-            } catch (err) {
-                showError(err.message);
-                showLoader(false);
-            }
-        }
-
-        // --- Signup Logic ---
-        async function handleSignup() {
-            const email = document.getElementById('signup-email').value;
-            const pass = document.getElementById('signup-password').value;
-            showLoader(true);
-
-            try {
-                const cred = await auth.createUserWithEmailAndPassword(email, pass);
-                // Create user data in Firestore
-                await db.collection("users").doc(cred.user.uid).set({
-                    email: email,
-                    balance: 0,
-                    spent: 0,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                window.location.href = 'index.html';
-            } catch (err) {
-                showError(err.message);
-                showLoader(false);
-            }
-        }
-
-        function showLoader(status) {
-            document.getElementById('loader').style.display = status ? 'flex' : 'none';
-        }
-
-        function showError(msg) {
-            const errBox = document.getElementById('error-msg');
-            errBox.innerText = msg;
-            errBox.style.display = 'block';
-            setTimeout(() => { errBox.style.display = 'none'; }, 4000);
-        }
-
-        // Check if already logged in
+        // ইউজার লগইন চেক ও ব্যালেন্স লোড
         auth.onAuthStateChanged(user => {
-            if(user) window.location.href = 'index.html';
+            if (user) {
+                currentUid = user.uid;
+                db.collection("users").doc(user.uid).onSnapshot(doc => {
+                    if (doc.exists) document.getElementById('user-balance').innerText = doc.data().balance || 0;
+                });
+            } else {
+                window.location.href = 'login.html';
+            }
         });
+
+        function selectMethod(name, num) {
+            document.querySelectorAll('.method-card').forEach(c => c.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            document.getElementById('pay-box').classList.add('active');
+            document.getElementById('admin-num').innerText = num;
+            window.selectedMethod = name;
+        }
+
+        // --- মূল অটো-ভেরিফিকেশন লজিক ---
+        async function verifyAutoPayment() {
+            const amount = parseFloat(document.getElementById('pay-amount').value);
+            const trxid = document.getElementById('pay-trxid').value.trim();
+            const statusBox = document.getElementById('status-display');
+            const btn = document.getElementById('submit-btn');
+
+            if (!amount || amount < 100 || !trxid) {
+                alert("সব তথ্য সঠিকভাবে দিন।");
+                return;
+            }
+
+            btn.innerText = "Checking Transaction...";
+            btn.disabled = true;
+
+            try {
+                // ১. এসএমএস লগ থেকে ট্রানজেকশন চেক করবে
+                const smsRef = db.collection("sms_logs").doc(trxid);
+                const doc = await smsRef.get();
+
+                if (doc.exists) {
+                    const smsData = doc.data();
+
+                    // ২. ডুপ্লিকেট চেক
+                    if (smsData.isUsed) {
+                        showStatus("এই ট্রানজেকশন আইডি আগে ব্যবহার করা হয়েছে!", "red");
+                    } 
+                    // ৩. পরিমাণ চেক (Amount Match)
+                    else if (smsData.amount < amount) {
+                        showStatus("পেমেন্ট অ্যামাউন্ট মেলেনি! আপনার পেমেন্ট: ৳" + smsData.amount, "orange");
+                    } 
+                    // ৪. সবকিছু সঠিক হলে ব্যালেন্স অ্যাড
+                    else {
+                        await db.collection("users").doc(currentUid).update({
+                            balance: firebase.firestore.FieldValue.increment(smsData.amount)
+                        });
+                        
+                        // ট্রানজেকশন মার্ক করা যাতে দ্বিতীয়বার ব্যবহার না হয়
+                        await smsRef.update({ isUsed: true, usedBy: currentUid });
+
+                        showStatus("অভিনন্দন! ৳" + smsData.amount + " আপনার ব্যালেন্সে অ্যাড হয়েছে।", "green");
+                        alert("সফলভাবে ব্যালেন্স অ্যাড হয়েছে!");
+                    }
+                } else {
+                    // ৫. যদি ট্রানজেকশন ভুয়া হয় (Rejected)
+                    showStatus("পেমেন্ট খুঁজে পাওয়া যায়নি! সঠিক TrxID দিন।", "red");
+                }
+            } catch (err) {
+                showStatus("সার্ভার এরর: " + err.message, "red");
+            } finally {
+                btn.innerText = "VERIFY & ADD MONEY";
+                btn.disabled = false;
+            }
+        }
+
+        function showStatus(msg, color) {
+            const box = document.getElementById('status-display');
+            box.innerText = msg;
+            box.style.display = 'block';
+            box.style.background = color === 'green' ? '#dcfce7' : (color === 'red' ? '#fee2e2' : '#fef3c7');
+            box.style.color = color === 'green' ? '#166534' : (color === 'red' ? '#991b1b' : '#92400e');
+        }
     </script>
 </body>
 </html>
