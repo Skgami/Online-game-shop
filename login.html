@@ -3,78 +3,290 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login & Register - Online Game Shop</title>
+    <title>Secure Login | Panel Shop Pro</title>
+    
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Oxanium:wght@400;700&display=swap');
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Oxanium', sans-serif; }
-        body { background: #0f172a; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: white; padding: 20px; }
-        .container { background: #1e293b; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 100%; max-width: 400px; text-align: center; border: 2px solid #f43f5e; }
-        h2 { margin-bottom: 25px; color: #f43f5e; text-transform: uppercase; letter-spacing: 2px; }
-        input { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: none; background: #334155; color: white; outline: none; }
-        button { width: 100%; padding: 12px; border-radius: 8px; border: none; background: #f43f5e; color: white; font-weight: bold; cursor: pointer; transition: 0.3s; margin-bottom: 10px; }
-        button:hover { background: #e11d48; transform: scale(1.02); }
-        .toggle-text { font-size: 13px; color: #94a3b8; cursor: pointer; }
-        .toggle-text b { color: #38bdf8; }
+        @import url('https://fonts.googleapis.com/css2?family=Oxanium:wght@300;600;800&family=Poppins:wght@300;400;600&display=swap');
+
+        :root {
+            --primary: #f43f5e;
+            --primary-glow: rgba(244, 63, 94, 0.4);
+            --bg-dark: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+
+        body {
+            background: var(--bg-dark);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            color: white;
+        }
+
+        /* --- Animated Background --- */
+        .bg-animate {
+            position: absolute; width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 50%, #1e293b 0%, #0f172a 100%);
+            z-index: -1;
+        }
+        .circle {
+            position: absolute; border-radius: 50%;
+            background: var(--primary);
+            filter: blur(80px);
+            opacity: 0.2;
+            animation: move 20s infinite alternate;
+        }
+        @keyframes move {
+            from { transform: translate(-50%, -50%); }
+            to { transform: translate(50%, 50%); }
+        }
+
+        /* --- Login Container --- */
+        .container {
+            width: 90%; max-width: 400px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            padding: 40px 30px;
+            border-radius: 30px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            text-align: center;
+            animation: slideUp 0.8s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo {
+            font-family: 'Oxanium';
+            font-size: 30px; font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+            text-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .subtitle { font-size: 12px; color: #94a3b8; margin-bottom: 30px; }
+
+        /* --- Input Styles --- */
+        .input-group { position: relative; margin-bottom: 20px; text-align: left; }
+        .input-group label { display: block; font-size: 11px; color: var(--primary); font-weight: 700; margin-bottom: 8px; text-transform: uppercase; }
+        
+        input {
+            width: 100%;
+            padding: 14px 20px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: white;
+            font-size: 14px;
+            outline: none;
+            transition: 0.3s;
+        }
+        input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px var(--primary-glow);
+            background: rgba(255,255,255,0.1);
+        }
+
+        /* --- Buttons --- */
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 10px;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 10px 20px var(--primary-glow);
+        }
+        .btn-primary:active { transform: scale(0.95); }
+
+        /* --- Toggle Section --- */
+        .toggle-text { margin-top: 25px; font-size: 13px; color: #94a3b8; }
+        .toggle-link { color: var(--primary); font-weight: 700; cursor: pointer; text-decoration: none; }
+
+        /* --- Loading Overly --- */
+        #loader {
+            display: none;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.9);
+            border-radius: 30px;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+        .spinner {
+            width: 40px; height: 40px;
+            border: 4px solid rgba(255,255,255,0.1);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Error Message */
+        #error-msg {
+            color: #ff4b4b;
+            font-size: 11px;
+            margin-bottom: 15px;
+            display: none;
+            background: rgba(255, 75, 75, 0.1);
+            padding: 8px;
+            border-radius: 8px;
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2 id="form-title">Login</h2>
-    <input type="email" id="email" placeholder="Email Address">
-    <input type="password" id="password" placeholder="Password">
-    <button id="main-btn" onclick="handleAuth()">Login Now</button>
-    <p class="toggle-text" onclick="toggleForm()">Don't have an account? <b id="toggle-link">Register</b></p>
-</div>
+    <div class="bg-animate">
+        <div class="circle" style="width: 300px; height: 300px; top: 10%; left: 10%;"></div>
+        <div class="circle" style="width: 400px; height: 400px; bottom: 10%; right: 10%;"></div>
+    </div>
 
-<script>
-    // আপনার Firebase কনফিগারেশন
-    const firebaseConfig = {
-        apiKey: "AIzaSyBx8h5PYxI34ZTaHs9ScdA8puSBt6h8yYU",
-        authDomain: "panelshop-71ed8.firebaseapp.com",
-        projectId: "panelshop-71ed8",
-        storageBucket: "panelshop-71ed8.firebasestorage.app",
-        messagingSenderId: "741029675696",
-        appId: "1:741029675696:web:86331dc6ab82551d86f175"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
+    <div class="container">
+        <div id="loader">
+            <div class="spinner"></div>
+            <p style="margin-top: 15px; font-size: 12px;">Authenticating...</p>
+        </div>
 
-    let isLogin = true;
+        <div class="logo">PANEL SHOP</div>
+        <p class="subtitle" id="form-subtitle">Login to access your premium dashboard</p>
 
-    function toggleForm() {
-        isLogin = !isLogin;
-        document.getElementById('form-title').innerText = isLogin ? 'Login' : 'Register';
-        document.getElementById('main-btn').innerText = isLogin ? 'Login Now' : 'Register Now';
-        document.getElementById('toggle-link').innerText = isLogin ? 'Register' : 'Login';
-    }
+        <div id="error-msg">Error: Invalid Credentials</div>
 
-    function handleAuth() {
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
+        <div id="login-form">
+            <div class="input-group">
+                <label>Email Address</label>
+                <input type="email" id="login-email" placeholder="Enter your email">
+            </div>
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="login-password" placeholder="••••••••">
+            </div>
+            <button class="btn btn-primary" onclick="handleLogin()">Login Account</button>
+            <p class="toggle-text">Don't have an account? <span class="toggle-link" onclick="toggleForm('signup')">Sign Up</span></p>
+        </div>
 
-        if(!email || !password) return alert("Please fill all fields!");
+        <div id="signup-form" style="display: none;">
+            <div class="input-group">
+                <label>Email Address</label>
+                <input type="email" id="signup-email" placeholder="Enter your email">
+            </div>
+            <div class="input-group">
+                <label>Create Password</label>
+                <input type="password" id="signup-password" placeholder="Min 6 characters">
+            </div>
+            <button class="btn btn-primary" onclick="handleSignup()">Create Account</button>
+            <p class="toggle-text">Already have an account? <span class="toggle-link" onclick="toggleForm('login')">Login</span></p>
+        </div>
 
-        if (isLogin) {
-            auth.signInWithEmailAndPassword(email, password)
-                .then(() => window.location.href = 'index.html')
-                .catch(err => alert(err.message));
-        } else {
-            auth.createUserWithEmailAndPassword(email, password)
-                .then((res) => {
-                    db.collection("users").doc(res.user.uid).set({
-                        email: email,
-                        balance: 0,
-                        role: 'user'
-                    }).then(() => window.location.href = 'index.html');
-                })
-                .catch(err => alert(err.message));
+    </div>
+
+    <script>
+        // --- Firebase Configuration ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyBx8h5PYxI34ZTaHs9ScdA8puSBt6h8yYU",
+            authDomain: "panelshop-71ed8.firebaseapp.com",
+            projectId: "panelshop-71ed8",
+            storageBucket: "panelshop-71ed8.firebasestorage.app",
+            messagingSenderId: "741029675696",
+            appId: "1:741029675696:web:86331dc6ab82551d86f175"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // --- Toggle Form Logic ---
+        function toggleForm(type) {
+            const loginF = document.getElementById('login-form');
+            const signupF = document.getElementById('signup-form');
+            const subtitle = document.getElementById('form-subtitle');
+            
+            if(type === 'signup') {
+                loginF.style.display = 'none';
+                signupF.style.display = 'block';
+                subtitle.innerText = "Join us and get the best gaming services";
+            } else {
+                loginF.style.display = 'block';
+                signupF.style.display = 'none';
+                subtitle.innerText = "Login to access your premium dashboard";
+            }
         }
-    }
-</script>
+
+        // --- Login Logic ---
+        async function handleLogin() {
+            const email = document.getElementById('login-email').value;
+            const pass = document.getElementById('login-password').value;
+            showLoader(true);
+
+            try {
+                await auth.signInWithEmailAndPassword(email, pass);
+                window.location.href = 'index.html';
+            } catch (err) {
+                showError(err.message);
+                showLoader(false);
+            }
+        }
+
+        // --- Signup Logic ---
+        async function handleSignup() {
+            const email = document.getElementById('signup-email').value;
+            const pass = document.getElementById('signup-password').value;
+            showLoader(true);
+
+            try {
+                const cred = await auth.createUserWithEmailAndPassword(email, pass);
+                // Create user data in Firestore
+                await db.collection("users").doc(cred.user.uid).set({
+                    email: email,
+                    balance: 0,
+                    spent: 0,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                window.location.href = 'index.html';
+            } catch (err) {
+                showError(err.message);
+                showLoader(false);
+            }
+        }
+
+        function showLoader(status) {
+            document.getElementById('loader').style.display = status ? 'flex' : 'none';
+        }
+
+        function showError(msg) {
+            const errBox = document.getElementById('error-msg');
+            errBox.innerText = msg;
+            errBox.style.display = 'block';
+            setTimeout(() => { errBox.style.display = 'none'; }, 4000);
+        }
+
+        // Check if already logged in
+        auth.onAuthStateChanged(user => {
+            if(user) window.location.href = 'index.html';
+        });
+    </script>
 </body>
 </html>
