@@ -2,244 +2,147 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Secure Deposit | ব্যালেন্স রিচার্জ</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Hind+Siliguri:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>অটোমেটিক অ্যাড মানি | PanelShop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root {
-            --primary: #6366f1;
-            --bg-dark: #020617;
-            --card-glass: rgba(15, 23, 42, 0.9);
-            --border: rgba(255, 255, 255, 0.1);
-            --text-main: #f8fafc;
-            --text-dim: #94a3b8;
-        }
-
-        /* --- Global Reset --- */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', 'Hind Siliguri', sans-serif; }
-
-        body {
-            background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.15), var(--bg-dark));
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        /* --- Master Container --- */
-        .portal-wrapper {
-            width: 100%;
-            max-width: 500px;
-            background: var(--card-glass);
-            backdrop-filter: blur(30px);
-            border: 1px solid var(--border);
-            border-radius: 40px;
-            padding: 45px 35px;
-            box-shadow: 0 50px 100px -20px rgba(0,0,0,0.6);
-            position: relative;
-        }
-
-        /* --- FIXED NAVIGATION HEADER --- */
-        .navigation-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 35px;
-        }
-
-        /* এই বাটনটি সরাসরি index.html এ নিয়ে যাবে */
-        .back-home-anchor {
-            text-decoration: none;
-            color: var(--text-dim);
-            font-size: 14px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px 18px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 1px solid transparent;
-        }
-
-        .back-home-anchor:hover {
-            color: #fff;
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateX(-5px);
-            border-color: var(--border);
-        }
-
-        .secure-lock {
-            background: rgba(16, 185, 129, 0.1);
-            color: #10b981;
-            padding: 8px 15px;
-            border-radius: 100px;
-            font-size: 11px;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        /* --- Payment Information --- */
-        .payment-display {
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--border);
-            border-radius: 25px;
-            padding: 25px;
-            text-align: center;
-            margin-bottom: 35px;
-        }
-
-        .payment-display h2 { font-size: 30px; letter-spacing: 2px; margin-bottom: 10px; }
-        .payment-display p { font-size: 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
-
-        /* --- Input Engineering --- */
-        .input-stack { display: flex; flex-direction: column; gap: 20px; }
-        .field-group label { display: block; font-size: 13px; font-weight: 700; color: var(--text-dim); margin-bottom: 10px; }
-        
-        .field-container { position: relative; }
-        .field-container i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--primary); }
-        
-        input {
-            width: 100%; background: rgba(15, 23, 42, 0.6); border: 2.5px solid var(--border);
-            border-radius: 18px; padding: 18px 18px 18px 52px; color: white;
-            font-size: 16px; font-weight: 600; transition: 0.4s;
-        }
-        input:focus { border-color: var(--primary); box-shadow: 0 0 20px rgba(99, 102, 241, 0.2); }
-
-        /* --- Master Button --- */
-        .master-btn {
-            width: 100%; padding: 20px; background: linear-gradient(135deg, var(--primary), #4f46e5);
-            color: white; border: none; border-radius: 20px; font-size: 17px; font-weight: 800;
-            cursor: pointer; transition: 0.4s; box-shadow: 0 15px 30px -10px rgba(99, 102, 241, 0.4);
-            margin-top: 15px;
-        }
-
-        /* --- Status Messaging --- */
-        #statusReport {
-            margin-top: 25px; padding: 15px; border-radius: 15px; font-size: 14px;
-            font-weight: 700; text-align: center; display: none;
-        }
+        body { background: #0f172a; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .glass-card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; }
+        .btn-primary { background: linear-gradient(135deg, #3b82f6, #2563eb); transition: all 0.3s; }
+        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
     </style>
 </head>
-<body>
+<body class="p-4 flex items-center justify-center min-h-screen">
 
-    <div class="portal-wrapper">
-        <div class="navigation-header">
-            <a href="index.html" class="back-home-anchor">
-                <i class="fas fa-chevron-left"></i> 
-                <span>HOME (হোম পেজ)</span>
-            </a>
-            <div class="secure-lock">
-                <i class="fas fa-lock"></i> SECURE
-            </div>
-        </div>
+    <div class="glass-card p-8 w-full max-w-md shadow-2xl">
+        <h2 class="text-2xl font-bold text-center mb-6 text-blue-400">
+            <i class="fas fa-wallet mr-2"></i>অটোমেটিক অ্যাড মানি
+        </h2>
 
-        <div class="payment-display">
-            <p>Send Money (পার্সোনাল নম্বর)</p>
-            <h2>01992170327</h2>
-            <div style="display: flex; justify-content: center; gap: 10px; margin-top: 10px;">
-                <span style="background:#d12053; color:white; padding:4px 10px; border-radius:8px; font-size:10px; font-weight:800;">bKash</span>
-                <span style="background:#f37021; color:white; padding:4px 10px; border-radius:8px; font-size:10px; font-weight:800;">Nagad</span>
-            </div>
-        </div>
+        <div id="statusBanner" class="hidden mb-4 p-3 rounded-lg text-sm text-center"></div>
 
-        <div class="input-stack">
-            <div class="field-group">
-                <label>Amount / টাকার পরিমাণ (Min: 100)</label>
-                <div class="field-container">
-                    <i class="fas fa-money-bill-wave"></i>
-                    <input type="number" id="payAmount" placeholder="কত টাকা পাঠিয়েছেন?">
-                </div>
+        <div class="space-y-4">
+            <div>
+                <label class="block text-gray-400 mb-1">টাকার পরিমাণ (BDT)</label>
+                <input type="number" id="inputAmount" placeholder="যেমন: 500" class="w-full bg-slate-800 border border-slate-700 p-3 rounded-lg focus:outline-none focus:border-blue-500">
             </div>
 
-            <div class="field-group">
-                <label>Sender Mobile / আপনার নম্বর</label>
-                <div class="field-container">
-                    <i class="fas fa-phone"></i>
-                    <input type="tel" id="paySender" placeholder="আপনার বিকাশ/নগদ নম্বর">
-                </div>
+            <div>
+                <label class="block text-gray-400 mb-1">ট্রানজেকশন আইডি (TrxID)</label>
+                <input type="text" id="inputTrx" placeholder="যেমন: TEST1234" class="w-full bg-slate-800 border border-slate-700 p-3 rounded-lg focus:outline-none focus:border-blue-500 uppercase">
             </div>
 
-            <div class="field-group">
-                <label>Transaction ID / ট্রানজেকশন আইডি</label>
-                <div class="field-container">
-                    <i class="fas fa-fingerprint"></i>
-                    <input type="text" id="payTrx" placeholder="SMS থেকে TrxID দিন">
-                </div>
-            </div>
-
-            <button class="master-btn" onclick="verifyDeposit()">
-                VERIFY NOW (ভেরিফাই করুন)
+            <button onclick="processPayment()" id="submitBtn" class="btn-primary w-full p-4 rounded-xl font-bold text-lg shadow-lg">
+                ভেরিফাই করুন
             </button>
+        </div>
 
-            <div id="statusReport"></div>
+        <div class="mt-6 text-xs text-gray-500 text-center">
+            <p>আপনার পাঠানো টাকা ১-২ মিনিটের মধ্যে একাউন্টে যোগ হবে।</p>
         </div>
     </div>
 
     <script>
-        const API_URL = "https://panelshop-71ed8-default-rtdb.firebaseio.com/sms_logs.json";
+        const DB_URL = "https://panelshop-71ed8-default-rtdb.firebaseio.com";
 
-        async function verifyDeposit() {
-            const amt = document.getElementById('payAmount').value;
-            const snd = document.getElementById('paySender').value.trim();
-            const trx = document.getElementById('payTrx').value.trim().toUpperCase();
-            const rep = document.getElementById('statusReport');
+        async function processPayment() {
+            const amount = document.getElementById('inputAmount').value;
+            const trx = document.getElementById('inputTrx').value.trim().toUpperCase();
+            const btn = document.getElementById('submitBtn');
+            const status = document.getElementById('statusBanner');
 
-            // ১. ভ্যালিডেশন
-            if (amt < 100) return showMsg("Minimum 100 BDT! (কমপক্ষে ১০০ টাকা)", "red");
-            if (snd.length < 11) return showMsg("Invalid Number! (সঠিক নম্বর দিন)", "red");
-            if (trx.length < 6) return showMsg("Invalid TrxID! (সঠিক আইডি দিন)", "red");
+            // ১. ইনপুট যাচাই
+            if (!amount || !trx) {
+                showAlert("সবগুলো ঘর পূরণ করুন!", "bg-red-500/20 text-red-400");
+                return;
+            }
 
-            rep.style.display = "block";
-            rep.innerText = "VERIFYING... (অপেক্ষা করুন)";
-            rep.style.background = "rgba(255,255,255,0.05)";
-            rep.style.color = "#94a3b8";
+            // বাটন লক করা
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>ভেরিফাই করা হচ্ছে...';
+            showAlert("সার্ভারের সাথে যোগাযোগ করা হচ্ছে...", "bg-blue-500/20 text-blue-400");
 
             try {
-                const res = await fetch(API_URL);
-                const data = await res.json();
-                let matchId = null;
+                // ২. ফায়ারবেস থেকে মেসেজ লগ আনা
+                const response = await fetch(`${DB_URL}/sms_logs.json`);
+                const logs = await response.json();
 
-                for (let key in data) {
-                    if (data[key].content.toUpperCase().includes(trx) && !data[key].isUsed) {
-                        matchId = key;
-                        break;
+                let foundMatch = false;
+                let logKey = "";
+
+                if (logs) {
+                    for (let key in logs) {
+                        const sms = logs[key];
+                        const content = sms.content.toUpperCase();
+                        
+                        // ৩. ট্রানজেকশন আইডি এবং টাকার পরিমাণ মেসেজে আছে কি না দেখা
+                        // এবং মেসেজটি আগে ব্যবহার হয়েছে কি না চেক করা (isUsed: false)
+                        if (content.includes(trx) && content.includes(amount) && (sms.isUsed === false || sms.isUsed === "false")) {
+                            foundMatch = true;
+                            logKey = key;
+                            break;
+                        }
                     }
                 }
 
-                if (matchId) {
-                    // ২. ডেটা আপডেট
-                    await fetch(`https://panelshop-71ed8-default-rtdb.firebaseio.com/sms_logs/${matchId}.json`, {
+                if (foundMatch) {
+                    // ৪. ব্যালেন্স আপডেট করার কাজ শুরু
+                    const userId = localStorage.getItem("userId"); // লগইন করা ইউজারের আইডি
+                    
+                    if (!userId) {
+                        showAlert("ত্রুটি: ইউজার আইডি পাওয়া যায়নি! আবার লগইন করুন।", "bg-red-500/20 text-red-400");
+                        resetButton();
+                        return;
+                    }
+
+                    // ৫. ইউজারের বর্তমান ব্যালেন্স আনা
+                    const userRes = await fetch(`${DB_URL}/users/${userId}.json`);
+                    const userData = await userRes.json();
+                    
+                    const oldBalance = parseFloat(userData.balance || 0);
+                    const newBalance = oldBalance + parseFloat(amount);
+
+                    // ৬. ইউজারের ব্যালেন্স আপডেট করা
+                    await fetch(`${DB_URL}/users/${userId}.json`, {
                         method: 'PATCH',
-                        body: JSON.stringify({ isUsed: true, user_sender: snd, user_amt: amt })
+                        body: JSON.stringify({ balance: newBalance })
                     });
 
-                    showMsg("SUCCESS! Adding Balance... (সফল হয়েছে)", "green");
-                    setTimeout(() => { window.location.href = "dashboard.html"; }, 3000);
+                    // ৭. এই মেসেজটি 'Used' হিসেবে মার্ক করা (যাতে আর কেউ নিতে না পারে)
+                    await fetch(`${DB_URL}/sms_logs/${logKey}.json`, {
+                        method: 'PATCH',
+                        body: JSON.stringify({ isUsed: true, usedBy: userId })
+                    });
+
+                    showAlert("অভিনন্দন! সফলভাবে ৳" + amount + " যোগ করা হয়েছে।", "bg-green-500/20 text-green-400");
+                    
+                    setTimeout(() => {
+                        window.location.href = "dashboard.html";
+                    }, 3000);
+
                 } else {
-                    showMsg("TrxID Not Found! (আইডি পাওয়া যায়নি)", "red");
+                    showAlert("রিজেক্ট! ট্রানজেকশন আইডি ভুল অথবা টাকা জমা হয়নি।", "bg-red-500/20 text-red-400");
+                    resetButton();
                 }
-            } catch (e) {
-                showMsg("Network Error! (সার্ভারে সমস্যা)", "red");
+
+            } catch (error) {
+                showAlert("সার্ভার ত্রুটি! আবার চেষ্টা করুন।", "bg-red-500/20 text-red-400");
+                resetButton();
             }
         }
 
-        function showMsg(txt, color) {
-            const rep = document.getElementById('statusReport');
-            rep.style.display = "block";
-            rep.innerText = txt;
-            rep.style.background = color === "green" ? "rgba(16, 185, 129, 0.15)" : "rgba(239, 68, 68, 0.15)";
-            rep.style.color = color === "green" ? "#10b981" : "#ef4444";
-            rep.style.border = `1px solid ${color === "green" ? "#10b981" : "#ef4444"}`;
+        function showAlert(msg, classes) {
+            const status = document.getElementById('statusBanner');
+            status.className = `p-3 rounded-lg text-sm text-center ${classes}`;
+            status.innerHTML = msg;
+            status.classList.remove('hidden');
+        }
+
+        function resetButton() {
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = false;
+            btn.innerHTML = 'ভেরিফাই করুন';
         }
     </script>
 </body>
