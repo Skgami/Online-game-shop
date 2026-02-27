@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>রেজিস্ট্রেশন | PanelShop</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#0f172a] text-white flex items-center justify-center min-h-screen p-4">
+
+    <div class="bg-[#1e293b] p-8 rounded-2xl shadow-2xl w-full max-w-md border border-slate-700">
+        <h2 class="text-3xl font-bold text-center text-blue-500 mb-2">PanelShop</h2>
+        <p class="text-center text-slate-400 mb-8">নতুন অ্যাকাউন্ট তৈরি করুন</p>
+        
+        <div class="space-y-4">
+            <div>
+                <input type="text" id="name" placeholder="আপনার নাম" class="w-full bg-[#0f172a] border border-slate-600 p-3 rounded-xl outline-none focus:border-blue-500 text-white">
+            </div>
+            <div>
+                <input type="number" id="phone" placeholder="মোবাইল নম্বর" class="w-full bg-[#0f172a] border border-slate-600 p-3 rounded-xl outline-none focus:border-blue-500 text-white">
+            </div>
+            <div>
+                <input type="email" id="email" placeholder="ইমেইল অ্যাড্রেস" class="w-full bg-[#0f172a] border border-slate-600 p-3 rounded-xl outline-none focus:border-blue-500 text-white">
+            </div>
+            <div>
+                <input type="password" id="password" placeholder="পাসওয়ার্ড (কমপক্ষে ৬ সংখ্যা)" class="w-full bg-[#0f172a] border border-slate-600 p-3 rounded-xl outline-none focus:border-blue-500 text-white">
+            </div>
+            
+            <button onclick="handleSignup()" id="sBtn" class="w-full bg-blue-600 p-4 rounded-xl font-bold hover:bg-blue-700 transition transform active:scale-95 shadow-lg shadow-blue-900/20">
+                রেজিস্ট্রেশন করুন
+            </button>
+            
+            <p class="text-center text-sm text-slate-400 mt-4">
+                ইতিমধ্যে অ্যাকাউন্ট আছে? <a href="login.html" class="text-blue-500 hover:underline font-semibold">লগইন করুন</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // আপনার Firebase Config (এগুলো আপনার প্রজেক্ট থেকে কপি করে বসান)
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "panelshop-71ed8.firebaseapp.com",
+            projectId: "panelshop-71ed8",
+            storageBucket: "panelshop-71ed8.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+        
+        // ফায়ারবেস ইনিশিয়ালাইজ
+        if (!firebase.apps.length) { 
+            firebase.initializeApp(firebaseConfig); 
+        }
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        async function handleSignup() {
+            const name = document.getElementById('name').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const btn = document.getElementById('sBtn');
+
+            // ভ্যালিডেশন
+            if(!name || !phone || !email || !password) {
+                alert("দয়া করে সবগুলো ঘর পূরণ করুন!");
+                return;
+            }
+            if(password.length < 6) {
+                alert("নিরাপত্তার জন্য পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের দিন!");
+                return;
+            }
+
+            btn.disabled = true; 
+            btn.innerText = "অ্যাকাউন্ট তৈরি হচ্ছে...";
+
+            try {
+                // ১. ফায়ারবেস অথেনটিকেশন দিয়ে ইউজার তৈরি
+                const res = await auth.createUserWithEmailAndPassword(email, password);
+                const uid = res.user.uid;
+
+                // ২. ফায়ারস্টোর ডাটাবেসে ইউজারের প্রোফাইল তৈরি
+                await db.collection("users").doc(uid).set({
+                    name: name,
+                    phone: phone,
+                    email: email,
+                    balance: 0, // নতুন ইউজারের ব্যালেন্স ০ থাকবে
+                    role: "user",
+                    createdAt: new Date().toISOString()
+                });
+
+                // ৩. লোকাল স্টোরেজে আইডি সেভ করা (যাতে অটো-পেমেন্ট কাজ করে)
+                localStorage.setItem("userId", uid);
+                
+                alert("অভিনন্দন! আপনার অ্যাকাউন্ট তৈরি সফল হয়েছে।");
+                window.location.href = "index.html"; 
+
+            } catch (err) {
+                console.error(err);
+                let msg = "ভুল হয়েছে: " + err.message;
+                if(err.code === 'auth/email-already-in-use') msg = "এই ইমেইল দিয়ে ইতিমধ্যে অ্যাকাউন্ট খোলা আছে।";
+                alert(msg);
+                btn.disabled = false; 
+                btn.innerText = "রেজিস্ট্রেশন করুন";
+            }
+        }
+    </script>
+</body>
+</html>
