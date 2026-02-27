@@ -1,16 +1,16 @@
-<!DOCTYPE html>
+            <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Command Center | Panel Shop Pro</title>
+    <title>Master Control | Admin Dashboard</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Oxanium:wght@400;700;800&family=Roboto+Mono:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Oxanium:wght@400;700;800&family=Poppins:wght@300;400;600&display=swap');
 
         :root {
             --admin-red: #ef4444;
@@ -21,276 +21,154 @@
             --accent: #38bdf8;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        
+        /* প্রাথমিক অবস্থায় পেজটি হাইড থাকবে সিকিউরিটির জন্য */
         body {
+            margin: 0; padding: 0;
             background-color: var(--admin-bg);
             color: var(--text-white);
-            padding: 20px;
-            padding-bottom: 50px;
+            font-family: 'Poppins', sans-serif;
+            display: none; 
         }
 
-        h1, h2, .font-mono { font-family: 'Oxanium', sans-serif; }
-
-        /* --- Header --- */
+        /* --- Header & Layout --- */
         .admin-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 20px;
-            border-bottom: 2px solid var(--card-bg);
-            margin-bottom: 30px;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px; background: #0b1120; border-bottom: 2px solid var(--card-bg);
         }
 
-        .status-pill {
-            background: rgba(34, 197, 94, 0.1);
-            color: var(--admin-green);
-            padding: 5px 15px;
-            border-radius: 50px;
-            font-size: 12px;
-            font-weight: bold;
-            border: 1px solid var(--admin-green);
-        }
-
-        /* --- Stats Overview --- */
-        .stats-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
+        .stats-container {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px; padding: 25px;
         }
 
         .stat-card {
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            border-bottom: 4px solid var(--accent);
+            background: var(--card-bg); padding: 20px; border-radius: 15px;
+            text-align: center; border-left: 5px solid var(--accent);
         }
 
-        .stat-card h3 { font-size: 12px; color: #94a3b8; margin-bottom: 10px; }
-        .stat-card p { font-size: 20px; font-weight: 800; color: var(--text-white); }
-
-        /* --- Admin Tabs --- */
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            overflow-x: auto;
-            padding-bottom: 10px;
+        /* --- Tabs --- */
+        .tab-menu {
+            display: flex; gap: 10px; padding: 0 25px; margin-bottom: 20px; overflow-x: auto;
         }
 
         .tab-btn {
-            background: var(--card-bg);
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 10px;
-            cursor: pointer;
-            white-space: nowrap;
-            font-weight: bold;
-            transition: 0.3s;
+            padding: 12px 25px; background: var(--card-bg); color: white;
+            border: none; border-radius: 10px; cursor: pointer; font-weight: bold;
         }
 
         .tab-btn.active { background: var(--accent); color: var(--admin-bg); }
 
-        /* --- Forms & Inputs --- */
-        .admin-box {
-            background: var(--card-bg);
-            padding: 25px;
-            border-radius: 20px;
-            margin-bottom: 30px;
-            display: none;
-            animation: fadeIn 0.4s ease;
+        /* --- Admin Sections --- */
+        .admin-section { padding: 0 25px; display: none; animation: fadeIn 0.5s ease; }
+        .admin-section.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .form-box {
+            background: var(--card-bg); padding: 25px; border-radius: 20px; max-width: 600px;
         }
 
-        .admin-box.active { display: block; }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        label { display: block; margin-bottom: 8px; font-size: 13px; font-weight: bold; color: #94a3b8; }
-        
         input, select {
-            width: 100%;
-            padding: 12px;
-            background: #0f172a;
-            border: 1px solid #334155;
-            border-radius: 10px;
-            color: white;
-            margin-bottom: 20px;
-            outline: none;
+            width: 100%; padding: 12px; background: #0f172a; border: 1px solid #334155;
+            border-radius: 10px; color: white; margin: 10px 0 20px; outline: none;
         }
 
-        input:focus { border-color: var(--accent); }
-
-        .btn-action {
-            width: 100%;
-            padding: 15px;
-            border: none;
-            border-radius: 10px;
-            font-weight: 800;
-            cursor: pointer;
-            text-transform: uppercase;
-            transition: 0.3s;
+        .btn-update {
+            width: 100%; padding: 15px; background: var(--accent); color: #000;
+            border: none; border-radius: 10px; font-weight: 800; cursor: pointer;
         }
-
-        .btn-update { background: var(--accent); color: var(--admin-bg); }
-        .btn-update:hover { background: #7dd3fc; }
 
         /* --- Table Styling --- */
-        .table-container { overflow-x: auto; }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-        }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th { text-align: left; padding: 15px; background: #334155; color: #94a3b8; }
+        td { padding: 15px; border-bottom: 1px solid #334155; }
+        .badge { padding: 5px 10px; border-radius: 5px; font-size: 11px; }
+        .badge-pending { background: #f59e0b; color: #000; }
+        .badge-success { background: #22c55e; color: #000; }
 
-        th { text-align: left; padding: 12px; background: #334155; color: #94a3b8; }
-        td { padding: 12px; border-bottom: 1px solid #334155; }
-
-        .badge {
-            padding: 4px 8px;
-            border-radius: 5px;
-            font-size: 10px;
-            font-weight: bold;
-        }
-
-        .bg-pending { background: #f59e0b; color: black; }
-        .bg-success { background: #22c55e; color: black; }
-
-        .action-icon-btn {
-            background: none;
-            border: 1px solid #475569;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 10px;
-        }
-
-        .action-icon-btn:hover { background: white; color: black; }
-
-        /* --- Floating Alerts --- */
-        #alert-box {
-            position: fixed; top: 20px; right: 20px;
-            padding: 15px 25px; border-radius: 10px;
-            display: none; z-index: 2000; animation: slideIn 0.3s ease;
-        }
-
-        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
-
+        .copy-btn { background: #475569; color: white; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 10px; }
     </style>
 </head>
 <body>
 
-    <div id="alert-box"></div>
-
     <div class="admin-header">
         <div>
-            <h1>ADMIN PANEL</h1>
-            <p style="font-size: 11px; color: #94a3b8;">Welcome back, System Operator</p>
+            <h1 style="font-family: 'Oxanium';">ADMIN COMMAND CENTER</h1>
+            <p style="font-size: 11px; color: #94a3b8;">Restricted Access Protocol</p>
         </div>
-        <div class="status-pill">● System Online</div>
+        <button onclick="logout()" style="background: var(--admin-red); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">Logout</button>
     </div>
 
-    <div class="stats-row">
-        <div class="stat-card">
-            <h3>TOTAL USERS</h3>
-            <p id="stat-users">0</p>
-        </div>
-        <div class="stat-card">
-            <h3>TOTAL REVENUE</h3>
-            <p id="stat-revenue">৳ 0</p>
-        </div>
-        <div class="stat-card">
-            <h3>PENDING ORDERS</h3>
-            <p id="stat-pending">0</p>
+    <div class="stats-container">
+        <div class="stat-card"><h3>TOTAL USERS</h3><p id="total-users">0</p></div>
+        <div class="stat-card"><h3>PENDING DEPOSITS</h3><p id="pending-deposits">0</p></div>
+        <div class="stat-card"><h3>TOTAL SALES</h3><p id="total-sales">৳ 0</p></div>
+    </div>
+
+    <div class="tab-menu">
+        <button class="tab-btn active" onclick="showTab('balance-tab', this)">Edit Balance</button>
+        <button class="tab-btn" onclick="showTab('deposit-tab', this)">Deposits List</button>
+        <button class="tab-btn" onclick="showTab('orders-tab', this)">Orders Log</button>
+    </div>
+
+    <div id="balance-tab" class="admin-section active">
+        <div class="form-box">
+            <h2 style="margin-bottom: 15px;">User Balance Manager</h2>
+            <label>Paste User UID:</label>
+            <input type="text" id="target-uid" placeholder="Enter User ID...">
+            <label>New Balance Amount (৳):</label>
+            <input type="number" id="new-balance" placeholder="e.g. 500">
+            <button class="btn-update" onclick="updateBalance()">EXECUTE UPDATE</button>
         </div>
     </div>
 
-    <div class="tabs">
-        <button class="tab-btn active" onclick="openTab('user-manage', this)">User Balance</button>
-        <button class="tab-btn" onclick="openTab('payment-manage', this)">Deposit Requests</button>
-        <button class="tab-btn" onclick="openTab('order-manage', this)">Orders List</button>
-        <button class="tab-btn" onclick="openTab('settings', this)">Settings</button>
-    </div>
-
-    <div id="user-manage" class="admin-box active">
-        <h2 style="margin-bottom: 20px;">Manage User Balance</h2>
-        
-        <label>User Unique ID (UID)</label>
-        <input type="text" id="target-uid" placeholder="Paste user UID here...">
-
-        <label>New Balance (৳)</label>
-        <input type="number" id="new-balance" placeholder="Enter amount (e.g. 500)">
-
-        <label>Reason for Adjustment</label>
-        <select id="adj-reason">
-            <option value="Deposit Approval">Deposit Approval</option>
-            <option value="Refund">Refund</option>
-            <option value="Gift/Bonus">Gift/Bonus</option>
-            <option value="Correction">Correction</option>
-        </select>
-
-        <button class="btn-action btn-update" onclick="updateUserBalance()">UPDATE BALANCE</button>
-    </div>
-
-    <div id="payment-manage" class="admin-box">
-        <h2 style="margin-bottom: 20px;">Deposit History & Approval</h2>
-        <div class="table-container">
+    <div id="deposit-tab" class="admin-section">
+        <div class="form-box" style="max-width: 100%;">
+            <h2>Recent Deposit Requests</h2>
             <table>
                 <thead>
                     <tr>
-                        <th>UID</th>
-                        <th>Transaction ID</th>
+                        <th>User UID</th>
+                        <th>TrxID</th>
                         <th>Amount</th>
                         <th>Status</th>
                         <th>Action</th>
                     </tr>
                 </thead>
-                <tbody id="deposit-table-body">
+                <tbody id="deposit-list">
                     </tbody>
             </table>
         </div>
     </div>
 
-    <div id="order-manage" class="admin-box">
-        <h2 style="margin-bottom: 20px;">Recent Purchases</h2>
-        <div class="table-container">
+    <div id="orders-tab" class="admin-section">
+        <div class="form-box" style="max-width: 100%;">
+            <h2>Product Order History</h2>
             <table>
                 <thead>
                     <tr>
                         <th>Product</th>
-                        <th>User UID</th>
+                        <th>User</th>
                         <th>Price</th>
-                        <th>Time</th>
+                        <th>Status</th>
                     </tr>
                 </thead>
-                <tbody id="orders-table-body">
+                <tbody id="order-list">
                     </tbody>
             </table>
         </div>
     </div>
 
-    <div id="settings" class="admin-box">
-        <h2>Global Settings</h2>
-        <p style="color: #94a3b8; margin-bottom: 20px;">Control site-wide parameters.</p>
-        
-        <label>Maintenance Mode</label>
-        <select>
-            <option value="off">OFF (Site Live)</option>
-            <option value="on">ON (Site Closed)</option>
-        </select>
-
-        <label>Admin Notification Email</label>
-        <input type="email" value="admin@panelshop.com">
-
-        <button class="btn-action btn-update" onclick="showAlert('Settings saved locally!', 'var(--admin-green)')">SAVE SETTINGS</button>
-    </div>
-
     <script>
-        // --- Firebase Config (Your Credentials) ---
+        // --- [1] SECURITY CHECK (সবকিছুর আগে) ---
+        if (sessionStorage.getItem("admin_auth") !== "true") {
+            alert("Unauthorized Access! Redirecting...");
+            window.location.href = "admin-panel-secret.html";
+        } else {
+            document.body.style.display = "block"; // ভেরিফাইড হলে পেজ দেখাবে
+        }
+
+        // --- [2] FIREBASE CONFIGURATION ---
         const firebaseConfig = {
             apiKey: "AIzaSyBx8h5PYxI34ZTaHs9ScdA8puSBt6h8yYU",
             authDomain: "panelshop-71ed8.firebaseapp.com",
@@ -301,111 +179,75 @@
         };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
-        const auth = firebase.auth();
 
-        // --- Auth Guard ---
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                // You can add logic to check if user.email === 'your_admin_email'
-                console.log("Admin Logged In");
-                loadStats();
-                loadDeposits();
-                loadOrders();
-            } else {
-                window.location.href = 'login.html';
-            }
-        });
+        // --- [3] CORE FUNCTIONS ---
 
-        // --- Tab Logic ---
-        function openTab(tabId, btn) {
-            document.querySelectorAll('.admin-box').forEach(box => box.classList.remove('active'));
+        // Tab Switcher
+        function showTab(tabId, btn) {
+            document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
             btn.classList.add('active');
         }
 
-        // --- Update Balance Logic ---
-        async function updateUserBalance() {
+        // Update Balance
+        async function updateBalance() {
             const uid = document.getElementById('target-uid').value.trim();
             const amount = parseFloat(document.getElementById('new-balance').value);
 
-            if(!uid || isNaN(amount)) {
-                showAlert("Please fill all fields correctly", "var(--admin-red)");
-                return;
-            }
+            if(!uid || isNaN(amount)) return alert("Please fill all fields!");
 
             try {
-                await db.collection("users").doc(uid).update({
-                    balance: amount
-                });
-                showAlert("Balance updated successfully for UID: " + uid, "var(--admin-green)");
+                await db.collection("users").doc(uid).update({ balance: amount });
+                alert("Balance updated successfully for UID: " + uid);
                 document.getElementById('new-balance').value = "";
-            } catch (error) {
-                showAlert("Error: " + error.message, "var(--admin-red)");
+            } catch (e) {
+                alert("Error: " + e.message);
             }
         }
 
-        // --- Load Deposits ---
+        // Fetch Deposit Data
         function loadDeposits() {
-            db.collection("deposits").orderBy("timestamp", "desc").limit(20).onSnapshot(snapshot => {
-                const tbody = document.getElementById('deposit-table-body');
-                tbody.innerHTML = "";
-                snapshot.forEach(doc => {
+            db.collection("deposits").orderBy("timestamp", "desc").limit(20).onSnapshot(snap => {
+                const list = document.getElementById('deposit-list');
+                list.innerHTML = "";
+                snap.forEach(doc => {
                     const data = doc.data();
-                    const row = `
+                    list.innerHTML += `
                         <tr>
-                            <td class="font-mono">${data.uid.substring(0,6)}...</td>
+                            <td>${data.uid.substring(0,8)}... <span class="copy-btn" onclick="copyUID('${data.uid}')">Copy</span></td>
                             <td>${data.transactionId}</td>
                             <td style="color:var(--admin-green)">৳${data.amount}</td>
-                            <td><span class="badge ${data.status === 'pending' ? 'bg-pending' : 'bg-success'}">${data.status}</span></td>
-                            <td><button class="action-icon-btn" onclick="copyUID('${data.uid}')">Copy UID</button></td>
-                        </tr>
-                    `;
-                    tbody.innerHTML += row;
-                });
-            });
-        }
-
-        // --- Load Orders ---
-        function loadOrders() {
-            db.collection("orders").orderBy("timestamp", "desc").limit(20).onSnapshot(snapshot => {
-                const tbody = document.getElementById('orders-table-body');
-                tbody.innerHTML = "";
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    const date = data.timestamp ? new Date(data.timestamp.seconds * 1000).toLocaleDateString() : 'N/A';
-                    tbody.innerHTML += `
-                        <tr>
-                            <td><b>${data.productName}</b></td>
-                            <td class="font-mono">${data.uid.substring(0,8)}...</td>
-                            <td>৳${data.price}</td>
-                            <td>${date}</td>
+                            <td><span class="badge ${data.status === 'pending' ? 'badge-pending' : 'badge-success'}">${data.status}</span></td>
+                            <td><button class="copy-btn" onclick="approveDeposit('${doc.id}', '${data.uid}', ${data.amount})">Approve</button></td>
                         </tr>
                     `;
                 });
             });
-        }
-
-        // --- Stats Loader ---
-        function loadStats() {
-            db.collection("users").onSnapshot(snap => document.getElementById('stat-users').innerText = snap.size);
-            db.collection("deposits").where("status", "==", "pending").onSnapshot(snap => document.getElementById('stat-pending').innerText = snap.size);
-        }
-
-        // --- Utilities ---
-        function showAlert(msg, color) {
-            const box = document.getElementById('alert-box');
-            box.innerText = msg;
-            box.style.background = color;
-            box.style.display = 'block';
-            setTimeout(() => { box.style.display = 'none'; }, 3000);
         }
 
         function copyUID(uid) {
-            navigator.clipboard.writeText(uid);
             document.getElementById('target-uid').value = uid;
-            showAlert("UID copied to Editor!", "var(--accent)");
+            alert("UID Copied to Editor!");
         }
+
+        // Logout
+        function logout() {
+            sessionStorage.removeItem("admin_auth");
+            window.location.href = "admin-panel-secret.html";
+        }
+
+        // Load Initial Stats
+        function loadStats() {
+            db.collection("users").onSnapshot(s => document.getElementById('total-users').innerText = s.size);
+            db.collection("deposits").where("status", "==", "pending").onSnapshot(s => document.getElementById('pending-deposits').innerText = s.size);
+        }
+
+        // Initialize Everything
+        window.onload = () => {
+            loadStats();
+            loadDeposits();
+        };
     </script>
 </body>
 </html>
