@@ -12,54 +12,31 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap');
         body { font-family: 'Hind Siliguri', sans-serif; background: #0f172a; }
-        .glass-effect { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4">
 
-    <div class="glass-effect p-8 rounded-[2rem] shadow-2xl w-full max-w-md">
-        <div class="text-center mb-10">
-            <div class="bg-gradient-to-tr from-blue-600 to-indigo-600 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-xl shadow-blue-900/40">
-                <i class="fas fa-user-plus text-2xl text-white"></i>
-            </div>
-            <h1 class="text-3xl font-bold text-white tracking-tight">নতুন একাউন্ট</h1>
-            <p class="text-slate-400 mt-2 font-medium">প্যানেলে যোগ দিতে তথ্যগুলো পূরণ করুন</p>
+    <div class="bg-[#1e293b] p-8 rounded-[2rem] shadow-2xl w-full max-w-md border border-slate-700">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-white">নতুন একাউন্ট</h1>
+            <p class="text-slate-400 mt-2">সঠিক তথ্য দিয়ে ফরমটি পূরণ করুন</p>
         </div>
         
         <div class="space-y-4">
-            <div class="relative group">
-                <i class="fas fa-user absolute left-4 top-4 text-slate-500 group-focus-within:text-blue-500 transition-colors"></i>
-                <input type="text" id="reg-name" placeholder="আপনার নাম" class="w-full bg-[#0b0f1a]/50 border border-slate-700 p-4 pl-12 rounded-2xl outline-none focus:border-blue-500 text-white transition-all shadow-inner">
-            </div>
-
-            <div class="relative group">
-                <i class="fas fa-phone absolute left-4 top-4 text-slate-500 group-focus-within:text-blue-500"></i>
-                <input type="number" id="reg-phone" placeholder="মোবাইল নম্বর" class="w-full bg-[#0b0f1a]/50 border border-slate-700 p-4 pl-12 rounded-2xl outline-none focus:border-blue-500 text-white transition-all shadow-inner">
-            </div>
-
-            <div class="relative group">
-                <i class="fas fa-envelope absolute left-4 top-4 text-slate-500 group-focus-within:text-blue-500"></i>
-                <input type="email" id="reg-email" placeholder="ইমেইল এড্রেস" class="w-full bg-[#0b0f1a]/50 border border-slate-700 p-4 pl-12 rounded-2xl outline-none focus:border-blue-500 text-white transition-all shadow-inner">
-            </div>
-
-            <div class="relative group">
-                <i class="fas fa-lock absolute left-4 top-4 text-slate-500 group-focus-within:text-blue-500"></i>
-                <input type="password" id="reg-pass" placeholder="নিরাপদ পাসওয়ার্ড" class="w-full bg-[#0b0f1a]/50 border border-slate-700 p-4 pl-12 rounded-2xl outline-none focus:border-blue-500 text-white transition-all shadow-inner">
-            </div>
+            <input type="text" id="reg-name" placeholder="আপনার নাম" class="w-full bg-[#0b0f1a] border border-slate-700 p-4 rounded-2xl outline-none focus:border-blue-500 text-white transition-all">
+            <input type="number" id="reg-phone" placeholder="মোবাইল নম্বর" class="w-full bg-[#0b0f1a] border border-slate-700 p-4 rounded-2xl outline-none focus:border-blue-500 text-white transition-all">
+            <input type="email" id="reg-email" placeholder="ইমেইল এড্রেস" class="w-full bg-[#0b0f1a] border border-slate-700 p-4 rounded-2xl outline-none focus:border-blue-500 text-white transition-all">
+            <input type="password" id="reg-pass" placeholder="পাসওয়ার্ড" class="w-full bg-[#0b0f1a] border border-slate-700 p-4 rounded-2xl outline-none focus:border-blue-500 text-white transition-all">
             
-            <button onclick="handleSignup()" id="sBtn" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 p-4 rounded-2xl font-bold text-lg text-white shadow-lg shadow-blue-900/30 transition-all transform active:scale-95 flex items-center justify-center gap-3">
-                <span>একউন্ট খুলুন</span>
-                <i class="fas fa-arrow-right text-sm"></i>
+            <button onclick="handleSignup()" id="sBtn" class="w-full bg-blue-600 hover:bg-blue-700 p-4 rounded-2xl font-bold text-white transition-all transform active:scale-95">
+                একউন্ট খুলুন
             </button>
-            
-            <div class="text-center pt-6 border-t border-slate-800">
-                <p class="text-slate-400">ইতিমধ্যে একাউন্ট আছে? <a href="login.html" class="text-blue-500 hover:text-blue-400 font-bold ml-1">লগইন করুন</a></p>
-            </div>
+            <p class="text-center mt-4 text-slate-400 text-sm">ইতিমধ্যে একাউন্ট আছে? <a href="login.html" class="text-blue-500 font-bold">লগইন</a></p>
         </div>
     </div>
 
     <script>
-        // আপনার স্ক্রিনশট থেকে নেওয়া সঠিক কনফিগ
+        // আমি আপনার স্ক্রিনশট থেকে সব তথ্য এখানে বসিয়ে দিয়েছি
         const firebaseConfig = {
             apiKey: "AIzaSyBx8hSPYxI34ZTaHs9ScdA8pGz9rO-o-O8",
             authDomain: "panelshop-71ed8.firebaseapp.com",
@@ -70,12 +47,10 @@
             appId: "1:741029675696:web:86331dc6ab82551d86f175"
         };
         
+        // ফায়ারবেস চেক
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
-        
-        const auth = firebase.auth();
-        const db = firebase.firestore();
 
         async function handleSignup() {
             const name = document.getElementById('reg-name').value.trim();
@@ -84,35 +59,29 @@
             const pass = document.getElementById('reg-pass').value.trim();
             const btn = document.getElementById('sBtn');
 
-            if(!name || !phone || !email || !pass) return alert("দয়া করে সব তথ্য সঠিকভাবে দিন!");
+            if(!name || !phone || !email || !pass) return alert("সব তথ্য দিন!");
+            if(pass.length < 6) return alert("পাসওয়ার্ড কমপক্ষে ৬ ডিজিট হতে হবে!");
 
             btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> প্রসেসিং হচ্ছে...';
+            btn.innerText = "প্রসেসিং হচ্ছে...";
 
             try {
-                // ১. ফায়ারবেস অথ দিয়ে ইউজার তৈরি
-                const res = await auth.createUserWithEmailAndPassword(email, pass);
-                const uid = res.user.uid;
-
-                // ২. ফায়ারস্টোরে প্রফেশনাল ডাটা স্টোরেজ
-                await db.collection("users").doc(uid).set({
+                const res = await firebase.auth().createUserWithEmailAndPassword(email, pass);
+                await firebase.firestore().collection("users").doc(res.user.uid).set({
                     name: name,
                     phone: phone,
                     email: email,
                     balance: 0,
                     joinedAt: new Date().toISOString()
                 });
-
-                localStorage.setItem("userId", uid);
+                localStorage.setItem("userId", res.user.uid);
                 window.location.href = "index.html";
-
             } catch (err) {
-                console.error(err);
                 alert("এরর: " + err.message);
                 btn.disabled = false;
-                btn.innerHTML = '<span>একউন্ট খুলুন</span> <i class="fas fa-arrow-right text-sm"></i>';
+                btn.innerText = "একউন্ট খুলুন";
             }
         }
     </script>
 </body>
-    </html>
+</html>
