@@ -1,243 +1,270 @@
 
-<!DOCTYPE html>
+        -<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure Checkout | Panel Shop Payment</title>
+    <title>Professional Payment Gateway | Secure Checkout</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 
     <style>
-        /* === Professional Reset & Root Variables === */
+        /* === Premium Professional CSS === */
         :root {
-            --primary: #4e73df;
-            --primary-dark: #224abe;
-            --bkash: #d12053;
-            --nagad: #f37021;
-            --rocket: #8c3494;
-            --success: #1cc88a;
-            --danger: #e74a3b;
-            --text-main: #3a3b45;
-            --bg-gradient: linear-gradient(135deg, #f8f9fc 0%, #e2e8f0 100%);
-            --glass: rgba(255, 255, 255, 0.95);
+            --primary-bkash: #d12053;
+            --primary-nagad: #f37021;
+            --current-theme: #d12053;
+            --success: #00b894;
+            --error: #ff7675;
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-dark: #2d3436;
+            --text-light: #636e72;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Poppins', sans-serif; background: var(--bg-gradient); color: var(--text-main); min-height: 100vh; display: flex; align-items: center; justify-content: center; overflow-x: hidden; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            min-height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 20px;
+        }
 
-        /* === Main Container Design === */
-        .checkout-container {
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .payment-wrapper {
             width: 100%;
             max-width: 500px;
-            background: var(--glass);
-            backdrop-filter: blur(10px);
+            background: var(--card-bg);
             border-radius: 24px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
-            padding: 40px;
-            margin: 20px;
-            position: relative;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            animation: slideUp 0.6s ease-out;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            animation: slideUp 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
 
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Header Design */
+        .card-header { padding: 35px 20px; text-align: center; background: #fff; border-bottom: 1px solid #eee; }
+        .card-header h2 { font-family: 'Poppins', sans-serif; font-size: 26px; color: var(--text-dark); letter-spacing: -0.5px; }
+        .card-header p { font-size: 14px; color: var(--text-light); margin-top: 5px; }
+
+        /* Method Tabs */
+        .tabs { display: flex; padding: 15px 25px; gap: 12px; }
+        .tab { 
+            flex: 1; padding: 12px; border: 2px solid #f1f2f6; border-radius: 12px; 
+            cursor: pointer; text-align: center; font-weight: 600; font-size: 14px;
+            transition: all 0.3s ease;
         }
+        .tab.active[data-m="bkash"] { border-color: var(--primary-bkash); background: #fff0f3; color: var(--primary-bkash); }
+        .tab.active[data-m="nagad"] { border-color: var(--primary-nagad); background: #fff5f0; color: var(--primary-nagad); }
 
-        /* === Header Graphics === */
-        .header { text-align: center; margin-bottom: 30px; }
-        .header .logo { width: 80px; height: 80px; background: var(--primary); border-radius: 20px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 15px; box-shadow: 0 10px 20px rgba(78, 115, 223, 0.3); }
-        .header .logo i { color: white; font-size: 35px; }
-        .header h2 { font-weight: 700; color: #2c3e50; font-size: 26px; }
-        .header p { color: #858796; font-size: 14px; }
-
-        /* === Payment Method Selector === */
-        .method-selector { display: flex; gap: 10px; margin-bottom: 25px; }
-        .method-card { flex: 1; padding: 15px; border: 2px solid #eaecf4; border-radius: 15px; cursor: pointer; transition: 0.3s; text-align: center; background: white; }
-        .method-card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .method-card.active { border-color: var(--primary); background: #f0f4ff; }
-        .method-card img { width: 40px; height: auto; margin-bottom: 8px; }
-        .method-card span { display: block; font-size: 12px; font-weight: 600; text-transform: uppercase; }
-
-        /* === Instruction Area === */
-        .instruction-panel { background: #fdfdfd; border: 1px dashed #d1d3e2; border-radius: 12px; padding: 15px; margin-bottom: 25px; position: relative; }
-        .instruction-panel .step { display: flex; align-items: flex-start; margin-bottom: 10px; font-size: 13px; line-height: 1.6; }
-        .instruction-panel .step b { color: var(--primary); margin-right: 5px; }
-
-        /* === Input Styling === */
-        .input-box { position: relative; margin-bottom: 20px; }
-        .input-box label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; color: #4e73df; }
-        .input-box input { width: 100%; padding: 15px 20px; border: 2px solid #eaecf4; border-radius: 12px; font-size: 16px; transition: 0.3s; background: white; font-weight: 500; letter-spacing: 1px; }
-        .input-box input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 15px rgba(78, 115, 223, 0.1); }
+        /* Payment Details Card */
+        .details-panel { 
+            margin: 0 25px 25px; background: #f9fbfd; border: 1px solid #e1e8ed; 
+            border-radius: 18px; padding: 20px; 
+        }
+        .detail-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .detail-row span { font-size: 13px; color: var(--text-light); }
+        .detail-row strong { font-size: 17px; color: var(--text-dark); letter-spacing: 0.5px; }
         
-        /* === Button Styling === */
-        .btn-verify { width: 100%; padding: 16px; background: linear-gradient(to right, var(--primary), var(--primary-dark)); color: white; border: none; border-radius: 12px; font-size: 17px; font-weight: 700; cursor: pointer; transition: 0.4s; box-shadow: 0 8px 20px rgba(78, 115, 223, 0.3); }
-        .btn-verify:hover { transform: scale(1.02); box-shadow: 0 10px 25px rgba(78, 115, 223, 0.4); }
-        .btn-verify:active { transform: scale(0.98); }
-        .btn-verify:disabled { background: #d1d3e2; box-shadow: none; cursor: not-allowed; }
+        .number-badge { 
+            background: #fff; border: 1px solid #d1d8e0; padding: 5px 12px; 
+            border-radius: 8px; font-weight: 700; color: var(--current-theme);
+        }
 
-        /* === Status Feedback === */
-        .status-container { margin-top: 20px; border-radius: 10px; font-size: 14px; font-weight: 500; display: none; }
-        .loader { width: 20px; height: 20px; border: 3px solid #f3f3f3; border-top: 3px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; display: inline-block; margin-right: 10px; vertical-align: middle; }
+        /* Instructions */
+        .steps { padding: 0 25px 25px; font-size: 13px; color: #57606f; line-height: 1.6; }
+        .steps ul { list-style: none; }
+        .steps li::before { content: "✓"; color: var(--success); font-weight: bold; margin-right: 8px; }
+
+        /* Input Form */
+        .form-area { padding: 0 25px 35px; }
+        .input-group { position: relative; margin-bottom: 20px; }
+        .input-group label { display: block; font-size: 13px; font-weight: 600; color: var(--text-dark); margin-bottom: 8px; }
+        input { 
+            width: 100%; padding: 16px; border: 2px solid #e1e8ed; border-radius: 12px; 
+            font-size: 16px; font-weight: 600; transition: all 0.3s;
+        }
+        input:focus { border-color: var(--current-theme); outline: none; box-shadow: 0 0 15px rgba(0,0,0,0.05); }
+
+        /* Action Button */
+        .btn-verify { 
+            width: 100%; padding: 18px; background: var(--current-theme); 
+            color: white; border: none; border-radius: 12px; font-size: 17px; 
+            font-weight: 700; cursor: pointer; transition: 0.4s;
+            box-shadow: 0 10px 20px -5px rgba(0,0,0,0.2);
+        }
+        .btn-verify:hover { transform: translateY(-3px); box-shadow: 0 15px 30px -10px rgba(0,0,0,0.3); }
+        .btn-verify:disabled { background: #cbd5e0; cursor: not-allowed; transform: none; }
+
+        /* Status Alerts */
+        #status-msg { 
+            margin-top: 20px; padding: 15px; border-radius: 12px; 
+            font-size: 14px; font-weight: 600; display: none; text-align: center;
+        }
+
+        /* Loader Animation */
+        .spinner {
+            width: 20px; height: 20px; border: 3px solid #ffffff44; border-top: 3px solid #fff;
+            border-radius: 50%; animation: spin 0.8s linear infinite; display: inline-block;
+            margin-right: 10px; vertical-align: middle;
+        }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        /* === Footer Security === */
-        .footer-secure { margin-top: 30px; border-top: 1px solid #eaecf4; padding-top: 20px; display: flex; align-items: center; justify-content: center; gap: 15px; color: #b7b9cc; font-size: 12px; }
     </style>
 </head>
 <body>
 
-<div class="checkout-container">
-    <div class="header">
-        <div class="logo">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+<div class="payment-wrapper">
+    <div class="card-header">
+        <h2>Add Funds</h2>
+        <p>Verified Automatic Payment System</p>
+    </div>
+
+    <div class="tabs">
+        <div class="tab active" data-m="bkash" onclick="setMode('bkash')">bKash</div>
+        <div class="tab" data-m="nagad" onclick="setMode('nagad')">Nagad</div>
+    </div>
+
+    <div class="details-panel">
+        <div class="detail-row">
+            <span>Payment Method</span>
+            <strong id="displayMethod">bKash Send Money</strong>
         </div>
-        <h2>Secure Deposit</h2>
-        <p>Instant Wallet Refill - Fast & Secure</p>
-    </div>
-
-    <div class="method-selector">
-        <div class="method-card active" onclick="selectMethod('bkash', this)">
-            <span>bKash</span>
+        <div class="detail-row">
+            <span>Target Number</span>
+            <strong class="number-badge">01992170327</strong>
         </div>
-        <div class="method-card" onclick="selectMethod('nagad', this)">
-            <span>Nagad</span>
-        </div>
-        <div class="method-card" onclick="selectMethod('rocket', this)">
-            <span>Rocket</span>
+        <div class="detail-row">
+            <span>Status</span>
+            <span style="color:var(--success); font-weight:700;">● Online</span>
         </div>
     </div>
 
-    <div class="instruction-panel" id="instructionPanel">
-        <div class="step"><b>1.</b> Send any amount to our Personal Number: <strong style="margin-left:5px; color:#333;">017XXXXXXXX</strong></div>
-        <div class="step"><b>2.</b> Copy the Transaction ID from the SMS confirmation.</div>
-        <div class="step"><b>3.</b> Paste the ID below and click verify to add funds.</div>
+    <div class="steps">
+        <ul>
+            <li>Send any amount to the number above.</li>
+            <li>Copy the Transaction ID (TrxID) from SMS.</li>
+            <li>Enter it below to add balance instantly.</li>
+        </ul>
     </div>
 
-    <div class="input-box">
-        <label for="trxID">Enter Transaction ID (TrxID)</label>
-        <input type="text" id="trxID" placeholder="Ex: BKX8273HJK" autocomplete="off">
-    </div>
+    <div class="form-area">
+        <div class="input-group">
+            <label>Transaction ID (TrxID)</label>
+            <input type="text" id="trxID" placeholder="Ex: BKX203948H" spellcheck="false" autocomplete="off">
+        </div>
 
-    <button id="verifyBtn" class="btn-verify" onclick="processPayment()">
-        <span id="btnText">Verify & Add Funds</span>
-    </button>
+        <button class="btn-verify" id="verifyBtn" onclick="handleVerification()">
+            <span id="btnLabel">Verify Transaction</span>
+        </button>
 
-    <div id="status-container" class="status-container">
-        <div id="status-msg" style="padding: 15px; border-radius: 10px;"></div>
-    </div>
-
-    <div class="footer-secure">
-        <div><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg> SSL Secure</div>
-        <div><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> PCI Compliant</div>
+        <div id="status-msg"></div>
     </div>
 </div>
 
 <script>
-    // Configuration
-    const DATABASE_ENDPOINT = "https://panelshop-71ed8-default-rtdb.firebaseio.com/sms_logs.json";
-    let selectedMethod = 'bkash';
+    const FIREBASE_DB = "https://panelshop-71ed8-default-rtdb.firebaseio.com/sms_logs.json";
+    let activeMethod = 'bkash';
 
-    function selectMethod(method, element) {
-        selectedMethod = method;
-        document.querySelectorAll('.method-card').forEach(card => card.classList.remove('active'));
-        element.classList.add('active');
+    function setMode(m) {
+        activeMethod = m;
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelector(`.tab[data-m="${m}"]`).classList.add('active');
         
-        // Dynamic styling changes based on method
         const root = document.documentElement;
-        if(method === 'bkash') root.style.setProperty('--primary', '#d12053');
-        else if(method === 'nagad') root.style.setProperty('--primary', '#f37021');
-        else root.style.setProperty('--primary', '#8c3494');
+        const display = document.getElementById('displayMethod');
+        
+        if(m === 'bkash') {
+            root.style.setProperty('--current-theme', '#d12053');
+            display.innerText = "bKash Send Money";
+        } else {
+            root.style.setProperty('--current-theme', '#f37021');
+            display.innerText = "Nagad Send Money";
+        }
     }
 
-    async function processPayment() {
-        const trxID = document.getElementById('trxID').value.trim();
+    async function handleVerification() {
+        const trx = document.getElementById('trxID').value.trim();
         const btn = document.getElementById('verifyBtn');
-        const btnText = document.getElementById('btnText');
-        const statusBox = document.getElementById('status-container');
-        const statusMsg = document.getElementById('status-msg');
+        const label = document.getElementById('btnLabel');
+        const status = document.getElementById('status-msg');
 
-        if (trxID.length < 5) {
-            triggerStatus("Please enter a valid Transaction ID.", "error");
+        if(trx.length < 5) {
+            updateUI("Please enter a valid TrxID", "error");
             return;
         }
 
-        // Processing State
         btn.disabled = true;
-        btnText.innerHTML = '<span class="loader"></span> Processing...';
-        statusBox.style.display = "none";
+        label.innerHTML = '<div class="spinner"></div> Verifying...';
+        status.style.display = "none";
 
         try {
-            const response = await fetch(DATABASE_ENDPOINT);
-            const database = await response.json();
+            const response = await fetch(FIREBASE_DB);
+            const logs = await response.json();
 
-            let matchFound = false;
-            let targetKey = "";
+            let foundKey = null;
 
-            // Advanced Scan with Security Filters
-            for (let key in database) {
-                const record = database[key];
-                if (record.content.toUpperCase().includes(trxID.toUpperCase()) && !record.isUsed) {
-                    matchFound = true;
-                    targetKey = key;
+            for (let key in logs) {
+                const log = logs[key];
+                // Security Check: ID match & Not used before
+                if (log.content.toUpperCase().includes(trx.toUpperCase()) && !log.isUsed) {
+                    foundKey = key;
                     break;
                 }
             }
 
-            if (matchFound) {
-                await finalizeTransaction(targetKey);
-                triggerStatus("Transaction Verified! $ Funds added to your wallet.", "success");
-                confettiEffect();
+            if (foundKey) {
+                // Success Procedure
+                await secureUpdate(foundKey);
+                confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 }, colors: ['#00b894', '#d12053', '#f37021'] });
+                updateUI("Payment Successful! Balance added.", "success");
                 
-                // Optional: Redirect to dashboard after success
+                // Redirect user after 3 seconds
                 setTimeout(() => { window.location.href = "dashboard.html"; }, 3000);
             } else {
-                triggerStatus("Invalid TrxID or Transaction not found yet.", "error");
+                updateUI("Invalid Transaction ID or Not Processed yet.", "error");
             }
 
         } catch (err) {
-            triggerStatus("System busy. Please try again in 1 minute.", "error");
+            updateUI("Server busy. Please try again later.", "error");
         } finally {
             btn.disabled = false;
-            btnText.innerText = "Verify & Add Funds";
+            label.innerText = "Verify Transaction";
         }
     }
 
-    async function finalizeTransaction(key) {
-        const updateURL = `https://panelshop-71ed8-default-rtdb.firebaseio.com/sms_logs/${key}.json`;
-        await fetch(updateURL, {
+    async function secureUpdate(key) {
+        const patchURL = `https://panelshop-71ed8-default-rtdb.firebaseio.com/sms_logs/${key}.json`;
+        await fetch(patchURL, {
             method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                isUsed: true, 
-                verificationTime: new Date().toISOString() 
-            })
+            body: JSON.stringify({ isUsed: true, claimDate: new Date().toLocaleString() })
         });
     }
 
-    function triggerStatus(text, type) {
-        const statusBox = document.getElementById('status-container');
-        const statusMsg = document.getElementById('status-msg');
-        statusBox.style.display = "block";
-        statusMsg.innerText = text;
-        
-        if (type === "success") {
-            statusMsg.style.background = "#d1f7e8";
-            statusMsg.style.color = "#1cc88a";
-            statusMsg.style.border = "1px solid #1cc88a";
+    function updateUI(msg, type) {
+        const box = document.getElementById('status-msg');
+        box.style.display = "block";
+        box.innerText = msg;
+        if(type === 'success') {
+            box.style.background = "#e6fffb";
+            box.style.color = "#00b894";
+            box.style.border = "1px solid #00b894";
         } else {
-            statusMsg.style.background = "#fee2e2";
-            statusMsg.style.color = "#e74a3b";
-            statusMsg.style.border = "1px solid #e74a3b";
+            box.style.background = "#fff1f0";
+            box.style.color = "#ff4d4f";
+            box.style.border = "1px solid #ff4d4f";
         }
-    }
-
-    function confettiEffect() {
-        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#4e73df', '#1cc88a'] });
     }
 </script>
 
