@@ -2,716 +2,245 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Secure Funds Gateway | প্রিমিয়াম রিচার্জ পোর্টাল</title>
+    <title>Secure Deposit | ব্যালেন্স রিচার্জ</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Hind+Siliguri:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Hind+Siliguri:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
     <style>
-        /* ========================================================
-           ULTIMATE CSS ARCHITECTURE (250+ LINES)
-           ========================================================
-        */
         :root {
-            /* Core Color Palette */
-            --primary-core: #6366f1;
-            --primary-glow: rgba(99, 102, 241, 0.4);
-            --bkash-main: #d12053;
-            --nagad-main: #f37021;
-            
-            /* Surface & Glassmorphism Colors */
-            --surface-deep: #020617;
-            --card-glass: rgba(15, 23, 42, 0.85);
-            --border-highlight: rgba(255, 255, 255, 0.08);
-            --input-bg: rgba(15, 23, 42, 0.6);
-            
-            /* Typography Colors */
-            --text-pure: #ffffff;
-            --text-vibrant: #f8fafc;
-            --text-muted: #94a3b8;
-            --text-success: #10b981;
-            --text-error: #ef4444;
-            
-            /* Transitions & Effects */
-            --transition-smooth: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            --shadow-standard: 0 40px 100px -20px rgba(0, 0, 0, 0.6);
-            --font-display: 'Outfit', 'Hind Siliguri', sans-serif;
-            --font-mono: 'JetBrains Mono', monospace;
+            --primary: #6366f1;
+            --bg-dark: #020617;
+            --card-glass: rgba(15, 23, 42, 0.9);
+            --border: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
         }
 
-        /* --- Global Reset & Scroll Behavior --- */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            outline: none;
-            -webkit-tap-highlight-color: transparent;
-        }
+        /* --- Global Reset --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', 'Hind Siliguri', sans-serif; }
 
         body {
-            background-color: var(--surface-deep);
-            font-family: var(--font-display);
-            color: var(--text-vibrant);
+            background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.15), var(--bg-dark));
+            color: var(--text-main);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow-x: hidden;
-            background: 
-                radial-gradient(circle at 0% 0%, rgba(99, 102, 241, 0.18) 0%, transparent 40%),
-                radial-gradient(circle at 100% 100%, rgba(168, 85, 247, 0.18) 0%, transparent 40%),
-                linear-gradient(135deg, #020617 0%, #0f172a 100%);
+            padding: 20px;
         }
 
-        /* --- Dynamic Animated Background Particles --- */
-        .portal-bg-overlay {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background-image: 
-                radial-gradient(var(--border-highlight) 1.5px, transparent 1.5px);
-            background-size: 40px 40px;
-            opacity: 0.2;
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        /* --- Main Gateway Framework --- */
-        .gateway-master-container {
+        /* --- Master Container --- */
+        .portal-wrapper {
             width: 100%;
-            max-width: 580px;
-            padding: 25px;
-            perspective: 2000px;
-        }
-
-        .gateway-portal-card {
+            max-width: 500px;
             background: var(--card-glass);
-            backdrop-filter: blur(40px) saturate(200%);
-            -webkit-backdrop-filter: blur(40px) saturate(200%);
-            border: 1px solid var(--border-highlight);
-            border-radius: 45px;
-            padding: 55px 45px;
-            box-shadow: var(--shadow-standard);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            padding: 45px 35px;
+            box-shadow: 0 50px 100px -20px rgba(0,0,0,0.6);
             position: relative;
-            transform-style: preserve-3d;
-            animation: gatewayEntrance 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
-        @keyframes gatewayEntrance {
-            from { opacity: 0; transform: translateY(60px) scale(0.9) rotateX(-15deg); }
-            to { opacity: 1; transform: translateY(0) scale(1) rotateX(0deg); }
-        }
-
-        /* --- Header & Navigation Interface --- */
-        .portal-header-nav {
+        /* --- FIXED NAVIGATION HEADER --- */
+        .navigation-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 45px;
+            margin-bottom: 35px;
         }
 
-        .back-home-trigger {
+        /* এই বাটনটি সরাসরি index.html এ নিয়ে যাবে */
+        .back-home-anchor {
             text-decoration: none;
-            color: var(--text-muted);
-            font-size: 13px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 14px 22px;
-            background: rgba(255, 255, 255, 0.04);
-            border-radius: 18px;
-            border: 1px solid transparent;
-            transition: var(--transition-smooth);
-        }
-
-        .back-home-trigger:hover {
-            color: var(--text-pure);
-            background: rgba(255, 255, 255, 0.08);
-            transform: translateX(-8px);
-            border-color: var(--border-highlight);
-        }
-
-        .encrypted-badge {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--text-success);
-            padding: 10px 18px;
-            border-radius: 100px;
-            font-size: 11px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border: 1px solid rgba(16, 185, 129, 0.2);
-        }
-
-        /* --- Identity & Branding --- */
-        .identity-stack {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .identity-stack h1 {
-            font-size: 34px;
-            font-weight: 800;
-            letter-spacing: -1.5px;
-            margin-bottom: 12px;
-            background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .identity-stack p {
-            color: var(--text-muted);
-            font-size: 15px;
-            font-weight: 500;
-            line-height: 1.6;
-        }
-
-        /* --- Centralized Payment Display --- */
-        .payment-info-nexus {
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid var(--border-highlight);
-            border-radius: 32px;
-            padding: 35px;
-            margin-bottom: 40px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            transition: var(--transition-smooth);
-        }
-
-        .payment-info-nexus:hover {
-            border-color: var(--primary-core);
-            background: rgba(0, 0, 0, 0.5);
-        }
-
-        .nexus-label-mix {
-            font-size: 12px;
-            font-weight: 800;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            display: block;
-            margin-bottom: 15px;
-        }
-
-        .nexus-target-number {
-            font-family: var(--font-mono);
-            font-size: 36px;
-            font-weight: 700;
-            color: var(--text-pure);
-            letter-spacing: 3px;
-            text-shadow: 0 0 25px var(--primary-glow);
-            margin-bottom: 20px;
-            display: block;
-        }
-
-        .provider-cluster {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-        }
-
-        .provider-pill {
-            font-size: 12px;
-            font-weight: 800;
-            padding: 8px 18px;
-            border-radius: 12px;
-            text-transform: uppercase;
-            transition: var(--transition-smooth);
-        }
-
-        .pill-bkash { background: rgba(209, 32, 83, 0.1); color: var(--bkash-main); border: 1px solid rgba(209, 32, 83, 0.2); }
-        .pill-nagad { background: rgba(243, 112, 33, 0.1); color: var(--nagad-main); border: 1px solid rgba(243, 112, 33, 0.2); }
-
-        /* --- Form Engineering & Input Logic --- */
-        .gateway-form-engine {
-            display: flex;
-            flex-direction: column;
-            gap: 28px;
-        }
-
-        .input-block {
-            position: relative;
-        }
-
-        .block-label-bilingual {
-            display: block;
+            color: var(--text-dim);
             font-size: 14px;
             font-weight: 700;
-            color: var(--text-muted);
-            margin-bottom: 12px;
-            padding-left: 8px;
-            transition: var(--transition-smooth);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 18px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid transparent;
         }
 
-        .input-visual-container {
-            position: relative;
-            width: 100%;
+        .back-home-anchor:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(-5px);
+            border-color: var(--border);
         }
 
-        .input-visual-container i {
-            position: absolute;
-            left: 22px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--primary-core);
-            font-size: 20px;
-            transition: var(--transition-smooth);
-            z-index: 5;
-        }
-
-        .gateway-input-field {
-            width: 100%;
-            background: var(--input-bg);
-            border: 2px solid var(--border-highlight);
-            border-radius: 22px;
-            padding: 22px 22px 22px 62px;
-            color: var(--text-pure);
-            font-family: var(--font-display);
-            font-size: 17px;
-            font-weight: 600;
-            transition: var(--transition-smooth);
-            position: relative;
-        }
-
-        .gateway-input-field:focus {
-            border-color: var(--primary-core);
-            background: rgba(15, 23, 42, 0.9);
-            box-shadow: 0 0 40px rgba(99, 102, 241, 0.25);
-            transform: translateY(-3px);
-        }
-
-        .gateway-input-field:focus + i {
-            color: var(--text-pure);
-            text-shadow: 0 0 10px var(--primary-core);
-        }
-
-        .field-helper-bn {
-            font-size: 11.5px;
-            color: #64748b;
-            margin-top: 10px;
-            margin-left: 12px;
-            font-weight: 500;
+        .secure-lock {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            padding: 8px 15px;
+            border-radius: 100px;
+            font-size: 11px;
+            font-weight: 800;
             display: flex;
             align-items: center;
             gap: 6px;
         }
 
-        /* --- Primary Verification Engine Button --- */
-        .verification-master-btn {
-            width: 100%;
+        /* --- Payment Information --- */
+        .payment-display {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: 25px;
             padding: 25px;
-            background: linear-gradient(135deg, var(--primary-core) 0%, #4f46e5 100%);
-            color: var(--text-pure);
-            border: none;
-            border-radius: 24px;
-            font-family: var(--font-display);
-            font-size: 18px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            cursor: pointer;
-            transition: var(--transition-smooth);
-            box-shadow: 0 20px 50px -10px var(--primary-glow);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 18px;
-            margin-top: 10px;
-        }
-
-        .verification-master-btn:hover {
-            transform: translateY(-6px) scale(1.02);
-            box-shadow: 0 35px 70px -10px var(--primary-glow);
-            filter: brightness(1.15);
-        }
-
-        .verification-master-btn:active {
-            transform: translateY(2px);
-        }
-
-        .verification-master-btn:disabled {
-            background: #1e293b;
-            color: #475569;
-            box-shadow: none;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        /* --- Smart Feedback Messaging System --- */
-        .smart-status-banner {
-            margin-top: 35px;
-            border-radius: 20px;
-            padding: 20px;
-            font-size: 15px;
-            font-weight: 700;
             text-align: center;
-            display: none;
-            animation: bannerSlideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            line-height: 1.5;
+            margin-bottom: 35px;
         }
 
-        @keyframes bannerSlideIn {
-            from { opacity: 0; transform: translateY(30px) scale(0.9); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
+        .payment-display h2 { font-size: 30px; letter-spacing: 2px; margin-bottom: 10px; }
+        .payment-display p { font-size: 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+
+        /* --- Input Engineering --- */
+        .input-stack { display: flex; flex-direction: column; gap: 20px; }
+        .field-group label { display: block; font-size: 13px; font-weight: 700; color: var(--text-dim); margin-bottom: 10px; }
+        
+        .field-container { position: relative; }
+        .field-container i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--primary); }
+        
+        input {
+            width: 100%; background: rgba(15, 23, 42, 0.6); border: 2.5px solid var(--border);
+            border-radius: 18px; padding: 18px 18px 18px 52px; color: white;
+            font-size: 16px; font-weight: 600; transition: 0.4s;
+        }
+        input:focus { border-color: var(--primary); box-shadow: 0 0 20px rgba(99, 102, 241, 0.2); }
+
+        /* --- Master Button --- */
+        .master-btn {
+            width: 100%; padding: 20px; background: linear-gradient(135deg, var(--primary), #4f46e5);
+            color: white; border: none; border-radius: 20px; font-size: 17px; font-weight: 800;
+            cursor: pointer; transition: 0.4s; box-shadow: 0 15px 30px -10px rgba(99, 102, 241, 0.4);
+            margin-top: 15px;
         }
 
-        /* --- High-Performance Loader Animation --- */
-        .portal-loader-ring {
-            width: 26px; height: 26px;
-            border: 4px solid rgba(255, 255, 255, 0.2);
-            border-top: 4px solid var(--text-pure);
-            border-radius: 50%;
-            animation: ringSpin 0.7s linear infinite;
-        }
-
-        @keyframes ringSpin {
-            100% { transform: rotate(360deg); }
-        }
-
-        /* --- Global Trust Array --- */
-        .global-trust-footer {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 40px;
-            margin-top: 50px;
-            opacity: 0.35;
-        }
-
-        .global-trust-footer i {
-            font-size: 28px;
-            transition: var(--transition-smooth);
-        }
-
-        .global-trust-footer i:hover {
-            opacity: 1;
-            color: var(--primary-core);
-            transform: scale(1.25);
-        }
-
-        /* --- Keyframe Library for Javascript Effects --- */
-        @keyframes fieldShake {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-10px); }
-            40%, 80% { transform: translateX(10px); }
-        }
-
-        /* Responsive Optimization */
-        @media (max-width: 480px) {
-            .gateway-portal-card { padding: 40px 25px; border-radius: 35px; }
-            .nexus-target-number { font-size: 28px; }
-            .verification-master-btn { font-size: 16px; padding: 22px; }
+        /* --- Status Messaging --- */
+        #statusReport {
+            margin-top: 25px; padding: 15px; border-radius: 15px; font-size: 14px;
+            font-weight: 700; text-align: center; display: none;
         }
     </style>
 </head>
 <body>
 
-    <div class="portal-bg-overlay"></div>
+    <div class="portal-wrapper">
+        <div class="navigation-header">
+            <a href="index.html" class="back-home-anchor">
+                <i class="fas fa-chevron-left"></i> 
+                <span>HOME (হোম পেজ)</span>
+            </a>
+            <div class="secure-lock">
+                <i class="fas fa-lock"></i> SECURE
+            </div>
+        </div>
 
-    <div class="gateway-master-container">
-        <div class="gateway-portal-card" id="mainPortal">
-            
-            <nav class="portal-header-nav">
-                <a href="index.html" class="back-home-trigger">
-                    <i class="fas fa-arrow-left-long"></i>
-                    <span>HOME (হোম)</span>
-                </a>
-                <div class="encrypted-badge">
-                    <i class="fas fa-shield-check"></i>
-                    <span>AES-256 SECURE</span>
+        <div class="payment-display">
+            <p>Send Money (পার্সোনাল নম্বর)</p>
+            <h2>01992170327</h2>
+            <div style="display: flex; justify-content: center; gap: 10px; margin-top: 10px;">
+                <span style="background:#d12053; color:white; padding:4px 10px; border-radius:8px; font-size:10px; font-weight:800;">bKash</span>
+                <span style="background:#f37021; color:white; padding:4px 10px; border-radius:8px; font-size:10px; font-weight:800;">Nagad</span>
+            </div>
+        </div>
+
+        <div class="input-stack">
+            <div class="field-group">
+                <label>Amount / টাকার পরিমাণ (Min: 100)</label>
+                <div class="field-container">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <input type="number" id="payAmount" placeholder="কত টাকা পাঠিয়েছেন?">
                 </div>
-            </nav>
-
-            <section class="identity-stack">
-                <h1>Deposit Center</h1>
-                <p>বিকাশ বা নগদ থেকে রিচার্জ করতে নিচের তথ্যগুলো নির্ভুলভাবে প্রদান করুন</p>
-            </section>
-
-            <section class="payment-info-nexus">
-                <span class="nexus-label-mix">Receiver Mobile (পার্সোনাল নম্বর)</span>
-                <span class="nexus-target-number">01992170327</span>
-                <div class="provider-cluster">
-                    <span class="provider-pill pill-bkash">bKash Personal</span>
-                    <span class="provider-pill pill-nagad">Nagad Personal</span>
-                </div>
-            </section>
-
-            <div class="gateway-form-engine">
-                
-                <div class="input-block">
-                    <label class="block-label-bilingual">Transaction Amount / টাকার পরিমাণ (Min: 100)</label>
-                    <div class="input-visual-container">
-                        <i class="fas fa-money-bill-wave"></i>
-                        <input type="number" id="gateAmount" class="gateway-input-field" placeholder="কত টাকা পাঠিয়েছেন? (যেমন: ৫০০)">
-                    </div>
-                    <p class="field-helper-bn"><i class="fas fa-info-circle"></i> ১০০ টাকা থেকে শুরু করে ২৫,০০০ টাকা পর্যন্ত রিচার্জ করা যাবে।</p>
-                </div>
-
-                <div class="input-block">
-                    <label class="block-label-bilingual">Sender Mobile / আপনার মোবাইল নম্বর</label>
-                    <div class="input-visual-container">
-                        <i class="fas fa-phone-square-alt"></i>
-                        <input type="tel" id="gateSender" class="gateway-input-field" placeholder="আপনার বিকাশ/নগদ নম্বরটি লিখুন" maxlength="11">
-                    </div>
-                    <p class="field-helper-bn"><i class="fas fa-user-check"></i> যে নম্বর থেকে টাকা পাঠিয়েছেন সেই নম্বরটি এখানে দিন।</p>
-                </div>
-
-                <div class="input-block">
-                    <label class="block-label-bilingual">Transaction ID / ট্রানজেকশন আইডি (TrxID)</label>
-                    <div class="input-visual-container">
-                        <i class="fas fa-receipt"></i>
-                        <input type="text" id="gateTrx" class="gateway-input-field" placeholder="SMS থেকে TrxID কপি করে এখানে দিন" autocomplete="off" spellcheck="false">
-                    </div>
-                    <p class="field-helper-bn"><i class="fas fa-key"></i> ট্রানজেকশন সফল হওয়ার পর পাওয়া আইডিটি সঠিকভাবে লিখুন।</p>
-                </div>
-
-                <button class="verification-master-btn" id="gateSubmitBtn" onclick="initiateGatewayVerification()">
-                    <span id="btnLabelStandard">VERIFY NOW (ভেরিফাই করুন)</span>
-                    <i class="fas fa-bolt-lightning" id="btnIconStandard"></i>
-                </button>
-
-                <div id="portalStatusBanner" class="smart-status-banner"></div>
-
             </div>
 
-            <footer class="global-trust-footer">
-                <i class="fab fa-cc-visa" title="Verified by Visa"></i>
-                <i class="fab fa-cc-mastercard" title="Mastercard Identity Check"></i>
-                <i class="fas fa-shield-halved" title="End-to-End Encrypted"></i>
-                <i class="fas fa-building-columns" title="Secure Banking Protocol"></i>
-            </footer>
+            <div class="field-group">
+                <label>Sender Mobile / আপনার নম্বর</label>
+                <div class="field-container">
+                    <i class="fas fa-phone"></i>
+                    <input type="tel" id="paySender" placeholder="আপনার বিকাশ/নগদ নম্বর">
+                </div>
+            </div>
+
+            <div class="field-group">
+                <label>Transaction ID / ট্রানজেকশন আইডি</label>
+                <div class="field-container">
+                    <i class="fas fa-fingerprint"></i>
+                    <input type="text" id="payTrx" placeholder="SMS থেকে TrxID দিন">
+                </div>
+            </div>
+
+            <button class="master-btn" onclick="verifyDeposit()">
+                VERIFY NOW (ভেরিফাই করুন)
+            </button>
+
+            <div id="statusReport"></div>
         </div>
     </div>
 
     <script>
-        /**
-         * GLOBAL CONSTANTS & API CONFIGURATION
-         */
-        const FIREBASE_SMS_ENDPOINT = "https://panelshop-71ed8-default-rtdb.firebaseio.com/sms_logs.json";
+        const API_URL = "https://panelshop-71ed8-default-rtdb.firebaseio.com/sms_logs.json";
 
-        /**
-         * Main Execution Routine for Payment Verification
-         */
-        async function initiateGatewayVerification() {
-            // Local Element Selectors
-            const fAmount = document.getElementById('gateAmount');
-            const fSender = document.getElementById('gateSender');
-            const fTrxID = document.getElementById('gateTrx');
-            const fBtn = document.getElementById('gateSubmitBtn');
-            const fStatus = document.getElementById('portalStatusBanner');
+        async function verifyDeposit() {
+            const amt = document.getElementById('payAmount').value;
+            const snd = document.getElementById('paySender').value.trim();
+            const trx = document.getElementById('payTrx').value.trim().toUpperCase();
+            const rep = document.getElementById('statusReport');
 
-            // Extraction & Normalization
-            const amountValue = parseFloat(fAmount.value);
-            const senderPhone = fSender.value.trim();
-            const trxToken = fTrxID.value.trim().toUpperCase();
+            // ১. ভ্যালিডেশন
+            if (amt < 100) return showMsg("Minimum 100 BDT! (কমপক্ষে ১০০ টাকা)", "red");
+            if (snd.length < 11) return showMsg("Invalid Number! (সঠিক নম্বর দিন)", "red");
+            if (trx.length < 6) return showMsg("Invalid TrxID! (সঠিক আইডি দিন)", "red");
 
-            // 1. MULTI-LEVEL VALIDATION ENGINE
-            if (isNaN(amountValue) || amountValue < 100) {
-                triggerErrorState("gateAmount", "INVALID AMOUNT! (টাকার পরিমাণ সঠিক নয়)", "কমপক্ষে ১০০ টাকা রিচার্জ করা আবশ্যক।");
-                return;
-            }
-
-            if (amountValue > 25000) {
-                triggerErrorState("gateAmount", "LIMIT EXCEEDED! (সীমা অতিক্রম করেছে)", "একবারে ২৫,০০০ টাকার বেশি রিচার্জ করা সম্ভব নয়।");
-                return;
-            }
-
-            if (senderPhone.length < 11) {
-                triggerErrorState("gateSender", "INVALID PHONE! (নম্বরটি সঠিক নয়)", "১১ ডিজিটের সঠিক মোবাইল নম্বর প্রদান করুন।");
-                return;
-            }
-
-            if (trxToken.length < 6) {
-                triggerErrorState("gateTrx", "INVALID TrxID! (আইডিটি সঠিক নয়)", "সঠিক ট্রানজেকশন আইডিটি SMS থেকে কপি করে দিন।");
-                return;
-            }
-
-            // 2. ACTIVATING PROCESSING STATE
-            setGatewayUIState(true);
-            renderStatusMessage("SYNCING WITH NETWORK... (অপেক্ষা করুন)", "neutral");
+            rep.style.display = "block";
+            rep.innerText = "VERIFYING... (অপেক্ষা করুন)";
+            rep.style.background = "rgba(255,255,255,0.05)";
+            rep.style.color = "#94a3b8";
 
             try {
-                // 3. SECURE DATA FETCH FROM FIREBASE
-                const fetchRequest = await fetch(FIREBASE_SMS_ENDPOINT);
-                
-                if (!fetchRequest.ok) throw new Error("Network latency detected.");
+                const res = await fetch(API_URL);
+                const data = await res.json();
+                let matchId = null;
 
-                const smsDatabase = await fetchRequest.json();
-                let matchingRecordKey = null;
-
-                // 4. TRANSACTION MATCHING ALGORITHM (O(n) COMPLEXITY)
-                for (let recordKey in smsDatabase) {
-                    const currentRecord = smsDatabase[recordKey];
-                    
-                    // Critical Business Logic: Match TrxID and check 'isUsed' flag
-                    if (currentRecord.content.toUpperCase().includes(trxToken) && !currentRecord.isUsed) {
-                        matchingRecordKey = recordKey;
+                for (let key in data) {
+                    if (data[key].content.toUpperCase().includes(trx) && !data[key].isUsed) {
+                        matchId = key;
                         break;
                     }
                 }
 
-                if (matchingRecordKey) {
-                    // 5. COMMITTING TO REALTIME DATABASE (ATOMIC PATCH)
-                    await updateTransactionStatus(matchingRecordKey, amountValue, senderPhone);
+                if (matchId) {
+                    // ২. ডেটা আপডেট
+                    await fetch(`https://panelshop-71ed8-default-rtdb.firebaseio.com/sms_logs/${matchId}.json`, {
+                        method: 'PATCH',
+                        body: JSON.stringify({ isUsed: true, user_sender: snd, user_amt: amt })
+                    });
 
-                    // 6. SUCCESS VISUAL CELEBRATION
-                    triggerConfettiBlast();
-                    renderStatusMessage(`SUCCESS! ৳${amountValue} ADDED TO WALLET. (সফল হয়েছে)`, "success");
-
-                    // 7. DELAYED REDIRECTION HANDLER
-                    setTimeout(() => {
-                        window.location.href = "dashboard.html";
-                    }, 3800);
-
+                    showMsg("SUCCESS! Adding Balance... (সফল হয়েছে)", "green");
+                    setTimeout(() => { window.location.href = "dashboard.html"; }, 3000);
                 } else {
-                    // 8. FAILED VERIFICATION HANDLING
-                    renderStatusMessage("TRANSACTION NOT FOUND! (আইডি পাওয়া যায়নি)", "danger");
-                    setGatewayUIState(false);
+                    showMsg("TrxID Not Found! (আইডি পাওয়া যায়নি)", "red");
                 }
-
-            } catch (fatalError) {
-                // 9. ERROR RECOVERY PROTOCOL
-                console.error("Gateway Fatal Error:", fatalError);
-                renderStatusMessage("GATEWAY TIMEOUT! (সার্ভার সংযোগ বিচ্ছিন্ন)", "danger");
-                setGatewayUIState(false);
+            } catch (e) {
+                showMsg("Network Error! (সার্ভারে সমস্যা)", "red");
             }
         }
 
-        /**
-         * Atomic Patch Operation for Firebase
-         */
-        async function updateTransactionStatus(dbKey, depositAmt, senderPhn) {
-            const patchUrl = `https://panelshop-71ed8-default-rtdb.firebaseio.com/sms_logs/${dbKey}.json`;
-            const payload = {
-                isUsed: true,
-                final_amount: depositAmt,
-                sender_mobile: senderPhn,
-                process_timestamp: new Date().toISOString(),
-                security_check: "VERIFIED_V8_ULTIMATE"
-            };
-
-            await fetch(patchUrl, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
+        function showMsg(txt, color) {
+            const rep = document.getElementById('statusReport');
+            rep.style.display = "block";
+            rep.innerText = txt;
+            rep.style.background = color === "green" ? "rgba(16, 185, 129, 0.15)" : "rgba(239, 68, 68, 0.15)";
+            rep.style.color = color === "green" ? "#10b981" : "#ef4444";
+            rep.style.border = `1px solid ${color === "green" ? "#10b981" : "#ef4444"}`;
         }
-
-        /**
-         * Dynamic UI State Controller
-         */
-        function setGatewayUIState(isLoading) {
-            const btn = document.getElementById('gateSubmitBtn');
-            const label = document.getElementById('btnLabelStandard');
-            const icon = document.getElementById('btnIconStandard');
-
-            if (isLoading) {
-                btn.disabled = true;
-                label.innerText = "PROCESSING TRANSACTION...";
-                icon.className = "portal-loader-ring";
-            } else {
-                btn.disabled = false;
-                label.innerText = "VERIFY NOW (ভেরিফাই করুন)";
-                icon.className = "fas fa-bolt-lightning";
-            }
-        }
-
-        /**
-         * Advanced Feedback Component
-         */
-        function renderStatusMessage(mainText, stateType) {
-            const banner = document.getElementById('portalStatusBanner');
-            banner.style.display = "block";
-            banner.innerText = mainText;
-
-            // Reset Styles
-            banner.style.background = "";
-            banner.style.color = "";
-            banner.style.border = "";
-
-            if (stateType === "success") {
-                banner.style.background = "rgba(16, 185, 129, 0.12)";
-                banner.style.color = "var(--text-success)";
-                banner.style.border = "1px solid rgba(16, 185, 129, 0.3)";
-            } else if (stateType === "danger") {
-                banner.style.background = "rgba(239, 68, 68, 0.12)";
-                banner.style.color = "var(--text-error)";
-                banner.style.border = "1px solid rgba(239, 68, 68, 0.3)";
-            } else {
-                banner.style.background = "rgba(148, 163, 184, 0.08)";
-                banner.style.color = "var(--text-muted)";
-                banner.style.border = "1px solid rgba(148, 163, 184, 0.2)";
-            }
-        }
-
-        /**
-         * Error UX Visual Protocol
-         */
-        function triggerErrorState(fieldId, title, message) {
-            const el = document.getElementById(fieldId);
-            el.style.borderColor = "var(--text-error)";
-            el.style.animation = "fieldShake 0.4s ease";
-            
-            renderStatusMessage(`${title} - ${message}`, "danger");
-            
-            setTimeout(() => {
-                el.style.animation = "";
-                el.style.borderColor = "var(--border-highlight)";
-            }, 2000);
-        }
-
-        /**
-         * Confetti Particle Logic
-         */
-        function triggerConfettiBlast() {
-            const duration = 3 * 1000;
-            const end = Date.now() + duration;
-
-            (function frame() {
-                confetti({
-                    particleCount: 5,
-                    angle: 60,
-                    spread: 55,
-                    origin: { x: 0 },
-                    colors: ['#6366f1', '#10b981']
-                });
-                confetti({
-                    particleCount: 5,
-                    angle: 120,
-                    spread: 55,
-                    origin: { x: 1 },
-                    colors: ['#6366f1', '#10b981']
-                });
-
-                if (Date.now() < end) {
-                    requestAnimationFrame(frame);
-                }
-            }());
-        }
-
-        // Auto-Focus Logic for UX
-        window.onload = () => {
-            gsap.from(".input-block", {
-                duration: 0.8,
-                opacity: 0,
-                y: 20,
-                stagger: 0.15,
-                ease: "power2.out"
-            });
-            document.getElementById('gateAmount').focus();
-        };
-
     </script>
 </body>
 </html>
