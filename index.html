@@ -3,90 +3,285 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>অনলাইন গেমস - Best Panel Shop</title>
+    <title>Premium Panel Shop | Home</title>
+    
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Oxanium:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Oxanium:wght@300;400;600;800&display=swap');
+
+        :root {
+            --primary: #f43f5e;
+            --secondary: #3b82f6;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --accent: #ff2e97;
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Oxanium', sans-serif; }
-        body { background-color: #f1f5f9; color: #333; padding-bottom: 70px; }
 
-        /* Navbar */
-        .navbar { background: white; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 1000; }
-        .logo-text { font-weight: 800; font-size: 20px; color: #f43f5e; text-transform: uppercase; letter-spacing: 0.5px; }
-        .balance-box { background: #3b82f6; color: white; padding: 6px 15px; border-radius: 25px; font-size: 14px; font-weight: bold; }
+        body { background-color: #f1f5f9; color: var(--dark); padding-bottom: 90px; overflow-x: hidden; }
 
-        /* Notice Section */
-        .notice-container { background: #0f172a; color: white; margin: 15px; padding: 15px; border-radius: 12px; font-size: 13px; line-height: 1.6; border-left: 4px solid #f43f5e; }
-        .notice-container b { color: #38bdf8; }
+        /* --- Animations --- */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes glow { 0% { box-shadow: 0 0 5px var(--primary); } 50% { box-shadow: 0 0 20px var(--primary); } 100% { box-shadow: 0 0 5px var(--primary); } }
 
-        /* Banner */
-        .banner { margin: 0 15px 20px; height: 160px; background: #cbd5e1; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .banner img { width: 100%; height: 100%; object-fit: cover; }
+        /* --- Navbar Styles --- */
+        .navbar {
+            background: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
 
-        /* Support Grid */
-        .support-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 0 15px 25px; }
-        .support-item { background: white; padding: 12px 5px; border-radius: 12px; text-align: center; font-size: 11px; font-weight: 700; text-decoration: none; color: #475569; border: 1px solid #e2e8f0; }
-        .support-item i { display: block; font-size: 20px; margin-bottom: 6px; }
+        .brand { font-size: 22px; font-weight: 800; color: var(--primary); text-transform: uppercase; }
+        
+        .balance-card {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
 
-        /* Items Grid */
-        .all-items-title { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 20px; font-weight: 800; color: #1e293b; }
-        .all-items-title span { width: 40px; height: 3px; background: #fb923c; }
+        /* --- Hero Banner --- */
+        .hero {
+            margin: 20px;
+            height: 160px;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://i.ibb.co/v6mXmY8/drip-client-logo.png');
+            background-size: cover;
+            background-position: center;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+            animation: fadeIn 0.8s ease;
+        }
 
-        .items-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 0 15px; }
-        .item-card { background: white; border-radius: 18px; overflow: hidden; text-align: center; border: 3px solid #ff2e97; transition: 0.3s; cursor: pointer; }
-        .item-card img { width: 100%; height: 130px; object-fit: cover; }
-        .item-card h3 { font-size: 14px; padding: 12px 5px; background: #ff2e97; color: white; text-transform: uppercase; }
+        .hero h2 { font-size: 24px; font-weight: 800; }
+        .hero p { font-size: 12px; opacity: 0.9; }
 
-        /* Bottom Menu */
-        .bottom-bar { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 12px 5px; border-top: 1px solid #e2e8f0; }
-        .nav-link { text-align: center; font-size: 10px; color: #64748b; text-decoration: none; font-weight: 600; }
+        /* --- Notice Board --- */
+        .notice-container {
+            margin: 15px 20px;
+            background: #1e293b;
+            color: white;
+            padding: 12px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            overflow: hidden;
+        }
+
+        .notice-label { background: var(--primary); padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; }
+        
+        marquee { font-size: 13px; font-weight: 400; }
+
+        /* --- Service Grid --- */
+        .section-title { margin: 20px 20px 10px; font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+        .section-title::before { content: ""; width: 5px; height: 20px; background: var(--primary); border-radius: 5px; display: inline-block; }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            padding: 0 20px;
+        }
+
+        .service-card {
+            background: white;
+            border-radius: 18px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            transition: 0.3s;
+            border: 1px solid #eef2f6;
+            animation: fadeIn 1s ease;
+        }
+
+        .service-card:active { transform: scale(0.95); }
+
+        .icon-box {
+            width: 60px;
+            height: 60px;
+            background: #f1f5f9;
+            border-radius: 15px;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 25px;
+        }
+
+        .service-card h3 { font-size: 14px; font-weight: 700; margin-bottom: 5px; }
+        .service-card p { font-size: 10px; color: #64748b; margin-bottom: 10px; }
+
+        .btn-buy {
+            background: var(--dark);
+            color: white;
+            border: none;
+            padding: 6px 15px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* --- Quick Actions --- */
+        .quick-actions {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px;
+            gap: 10px;
+        }
+
+        .action-item {
+            flex: 1;
+            background: white;
+            padding: 15px 10px;
+            border-radius: 15px;
+            text-align: center;
+            text-decoration: none;
+            color: var(--dark);
+            font-size: 11px;
+            font-weight: 700;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        /* --- Bottom Navigation --- */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 15px;
+            border-top: 1px solid #e2e8f0;
+            z-index: 1000;
+        }
+
+        .nav-item { text-align: center; text-decoration: none; color: #94a3b8; font-size: 10px; font-weight: bold; }
+        .nav-item.active { color: var(--primary); }
+        .nav-icon { font-size: 20px; display: block; margin-bottom: 2px; }
+
+        /* Loading Screen */
+        #loader {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: white;
+            display: flex; justify-content: center; align-items: center;
+            z-index: 9999;
+        }
     </style>
 </head>
 <body>
 
-    <div class="navbar">
-        <div class="logo-text">অনলাইন গেমস</div>
-        <div class="balance-box">৳ <span id="balance">0</span></div>
+    <div id="loader">
+        <div style="text-align:center;">
+            <div style="width:50px; height:50px; border:5px solid #f1f5f9; border-top:5px solid var(--primary); border-radius:50%; animation: spin 1s linear infinite;"></div>
+            <p style="margin-top:15px; font-weight:bold; color:var(--dark);">Loading System...</p>
+        </div>
+    </div>
+    <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
+
+    <nav class="navbar">
+        <div class="brand">PANEL SHOP</div>
+        <div class="balance-card">
+            <span>৳</span> <span id="userBalance">0.00</span>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <h2>PREMIUM ACCESS</h2>
+        <p>Best Gaming Panels & Cheats in Bangladesh</p>
     </div>
 
     <div class="notice-container">
-        <b>Notice:</b> অনলাইন গেমস সাইট রাত দিন ২৪ ঘণ্টা চালু থাকে। এখানে মাত্র ৩০ সেকেন্ডে অটোমেটিক প্যানেল ডেলিভারি দেওয়া হয়।
+        <span class="notice-label">NOTICE</span>
+        <marquee>আমাদের সকল সার্ভিস এখন অটোমেটিক চালু আছে। পেমেন্ট করার ৫-১০ মিনিটের মধ্যে কোড পেয়ে যাবেন। সাপোর্ট এর জন্য হোয়াটসঅ্যাপ এ মেসেজ দিন।</marquee>
     </div>
 
-    <div class="banner">
-        <img src="https://img.freepik.com/premium-photo/modern-gaming-abstract-background-with-glitch-neon-effects_218319-9524.jpg" alt="Banner">
+    <div class="quick-actions">
+        <a href="add-money.html" class="action-item">
+            <span style="font-size:20px; display:block;">➕</span>Add Fund
+        </a>
+        <a href="my-orders.html" class="action-item">
+            <span style="font-size:20px; display:block;">📜</span>History
+        </a>
+        <a href="https://wa.me/YOUR_NUMBER" class="action-item">
+            <span style="font-size:20px; display:block;">💬</span>Support
+        </a>
     </div>
 
-    <div class="support-grid">
-        <a href="https://wa.me/YOUR_NUMBER" class="support-item" style="color: #22c55e;"><i>🟢</i> WhatsApp</a>
-        <a href="https://t.me/YOUR_CHANNEL" class="support-item" style="color: #0ea5e9;"><i>🔵</i> Telegram</a>
-        <a href="#" class="support-item" style="color: #f59e0b;"><i>📲</i> App Download</a>
-    </div>
-
-    <div class="all-items-title"><span></span> ALL ITEMS <span></span></div>
-
-    <div class="items-container">
-        <div class="item-card" onclick="window.location.href='shop.html'">
-            <img src="https://i.ibb.co/v6mXmY8/drip-client-logo.png" alt="Drip Client">
+    <h2 class="section-title">পপুলার সার্ভিস সমূহ</h2>
+    
+    <div class="grid-container">
+        <div class="service-card">
+            <div class="icon-box">🛡️</div>
             <h3>DRIP CLIENT</h3>
+            <p>High Performance</p>
+            <div style="font-weight:800; margin-bottom:10px; color:var(--primary);">৳ ৫০০</div>
+            <button class="btn-buy" onclick="window.location.href='shop.html'">BUY NOW</button>
         </div>
-        <div class="item-card" onclick="window.location.href='shop.html'">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_R0W0f0uOa7Iu2hE..." alt="HG Cheats">
+
+        <div class="service-card">
+            <div class="icon-box">🔥</div>
             <h3>HG CHEATS</h3>
+            <p>Premium Mods</p>
+            <div style="font-weight:800; margin-bottom:10px; color:var(--primary);">৳ ৭৫০</div>
+            <button class="btn-buy" onclick="window.location.href='shop.html'">BUY NOW</button>
+        </div>
+
+        <div class="service-card">
+            <div class="icon-box">🎯</div>
+            <h3>AIM ASSIST</h3>
+            <p>Perfect Accuracy</p>
+            <div style="font-weight:800; margin-bottom:10px; color:var(--primary);">৳ ৩০০</div>
+            <button class="btn-buy" onclick="window.location.href='shop.html'">BUY NOW</button>
+        </div>
+
+        <div class="service-card">
+            <div class="icon-box">💎</div>
+            <h3>VIP PANEL</h3>
+            <p>All Features</p>
+            <div style="font-weight:800; margin-bottom:10px; color:var(--primary);">৳ ১২০০</div>
+            <button class="btn-buy" onclick="window.location.href='shop.html'">BUY NOW</button>
         </div>
     </div>
 
-    <div class="bottom-bar">
-        <a href="index.html" class="nav-link">🏠<br>Home</a>
-        <a href="add-money.html" class="nav-link">💳<br>Add Fund</a>
-        <a href="#" class="nav-link" onclick="alert('Coming Soon')">🎁<br>My Codes</a>
-        <a href="dashboard.html" class="nav-link">👤<br>Account</a>
+    <div class="bottom-nav">
+        <a href="index.html" class="nav-item active">
+            <span class="nav-icon">🏠</span>Home
+        </a>
+        <a href="add-money.html" class="nav-item">
+            <span class="nav-icon">💳</span>Deposit
+        </a>
+        <a href="my-orders.html" class="nav-item">
+            <span class="nav-icon">📦</span>Orders
+        </a>
+        <a href="dashboard.html" class="nav-item">
+            <span class="nav-icon">👤</span>Profile
+        </a>
     </div>
 
     <script>
-        // Firebase কনফিগারেশন
+        // --- Firebase Configuration ---
         const firebaseConfig = {
             apiKey: "AIzaSyBx8h5PYxI34ZTaHs9ScdA8puSBt6h8yYU",
             authDomain: "panelshop-71ed8.firebaseapp.com",
@@ -96,23 +291,44 @@
             appId: "1:741029675696:web:86331dc6ab82551d86f175"
         };
         firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
         const auth = firebase.auth();
+        const db = firebase.firestore();
 
-        // লগইন স্ট্যাটাস চেক
+        // --- Security Check (Login Detection) ---
         auth.onAuthStateChanged(user => {
             if (user) {
-                // যদি লগইন থাকে, ব্যালেন্স দেখাও
+                console.log("User Logged In:", user.email);
+                
+                // Real-time Balance Update
                 db.collection("users").doc(user.uid).onSnapshot(doc => {
                     if (doc.exists) {
-                        document.getElementById("balance").innerText = doc.data().balance || 0;
+                        document.getElementById("userBalance").innerText = doc.data().balance || 0;
+                    } else {
+                        // Create User Doc if doesn't exist
+                        db.collection("users").doc(user.uid).set({
+                            email: user.email,
+                            balance: 0,
+                            spent: 0
+                        });
                     }
+                    hideLoader();
                 });
             } else {
-                // যদি লগইন না থাকে, login.html-এ নিয়ে যাও
+                // If not logged in, send to login page
                 window.location.href = 'login.html';
             }
         });
+
+        function hideLoader() {
+            setTimeout(() => {
+                document.getElementById('loader').style.display = 'none';
+            }, 500);
+        }
+
+        // Error Handling
+        window.onerror = function() {
+            hideLoader();
+        };
     </script>
 </body>
 </html>
