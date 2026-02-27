@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Support | Panel Shop</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #6366f1;
+            --whatsapp: #25D366;
+            --telegram: #0088cc;
+            --bg: #020617;
+            --card: rgba(30, 41, 59, 0.7);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
+
+        body {
+            background-color: var(--bg);
+            background-image: radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.1), transparent);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: white;
+        }
+
+        .support-container {
+            width: 100%;
+            max-width: 450px;
+            background: var(--card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 35px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } }
+
+        .back-home {
+            position: absolute; top: 25px; left: 25px;
+            color: #94a3b8; text-decoration: none; font-size: 14px; font-weight: 600;
+            display: flex; align-items: center; gap: 8px;
+        }
+
+        .support-header i {
+            font-size: 50px; color: var(--primary); margin-bottom: 20px;
+            filter: drop-shadow(0 0 15px var(--primary));
+        }
+
+        .support-header h1 { font-size: 28px; font-weight: 800; margin-bottom: 10px; }
+        .support-header p { color: #94a3b8; font-size: 14px; margin-bottom: 35px; }
+
+        /* Support Buttons */
+        .support-options { display: flex; flex-direction: column; gap: 15px; }
+
+        .btn-support {
+            width: 100%;
+            padding: 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            color: white;
+            font-size: 17px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .whatsapp { background: linear-gradient(135deg, #128c7e, var(--whatsapp)); box-shadow: 0 10px 20px rgba(37, 211, 102, 0.2); }
+        .telegram { background: linear-gradient(135deg, #0077b5, var(--telegram)); box-shadow: 0 10px 20px rgba(0, 136, 204, 0.2); }
+
+        .btn-support:hover { transform: translateY(-5px) scale(1.02); filter: brightness(1.1); }
+
+        .info-box {
+            margin-top: 35px;
+            padding: 15px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 15px;
+            font-size: 12px;
+            color: #64748b;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+    <a href="index.html" class="back-home"><i class="fas fa-arrow-left"></i> Home</a>
+
+    <div class="support-container">
+        <div class="support-header">
+            <i class="fas fa-headset"></i>
+            <h1>Need Help?</h1>
+            <p>আমাদের সাপোর্ট টিম ২৪/৭ আপনার সেবায় নিয়োজিত। নিচের যেকোনো মাধ্যমে আমাদের সাথে যোগাযোগ করুন।</p>
+        </div>
+
+        <div class="support-options">
+            <a href="https://wa.me/8801992170327" target="_blank" class="btn-support whatsapp">
+                <i class="fab fa-whatsapp"></i> WhatsApp Support
+            </a>
+
+            <a href="https://t.me/YourTelegramUsername" target="_blank" class="btn-support telegram">
+                <i class="fab fa-telegram-plane"></i> Telegram Channel
+            </a>
+        </div>
+
+        <div class="info-box">
+            <i class="fas fa-clock" style="margin-right: 5px;"></i> 
+            পেমেন্ট সংক্রান্ত সমস্যার জন্য আপনার <b>Transaction ID</b> সাথে রাখুন। সাধারণত ৫-১০ মিনিটের মধ্যে সমাধান দেওয়া হয়।
+        </div>
+    </div>
+
+</body>
+</html>
