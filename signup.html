@@ -2,84 +2,54 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>একাউন্ট তৈরি করুন | PanelShop Pro</title>
+    <title>রেজিস্ট্রেশন | Online Game Shop</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap');
-        body { font-family: 'Hind Siliguri', sans-serif; background: #0f172a; }
-    </style>
 </head>
-<body class="flex items-center justify-center min-h-screen p-4">
-
-    <div class="bg-[#1e293b] p-8 rounded-[2rem] shadow-2xl w-full max-w-md border border-slate-700">
-        <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold text-white">নতুন একাউন্ট</h1>
-            <p class="text-slate-400 mt-2">সঠিক তথ্য দিয়ে ফরমটি পূরণ করুন</p>
-        </div>
-        
+<body class="bg-slate-900 text-white flex items-center justify-center min-h-screen">
+    <div class="bg-slate-800 p-8 rounded-2xl shadow-xl w-full max-w-md">
+        <h2 class="text-2xl font-bold text-center mb-6">নতুন একাউন্ট তৈরি করুন</h2>
         <div class="space-y-4">
-            <input type="text" id="reg-name" placeholder="আপনার নাম" class="w-full bg-[#0b0f1a] border border-slate-700 p-4 rounded-2xl outline-none focus:border-blue-500 text-white transition-all">
-            <input type="number" id="reg-phone" placeholder="মোবাইল নম্বর" class="w-full bg-[#0b0f1a] border border-slate-700 p-4 rounded-2xl outline-none focus:border-blue-500 text-white transition-all">
-            <input type="email" id="reg-email" placeholder="ইমেইল এড্রেস" class="w-full bg-[#0b0f1a] border border-slate-700 p-4 rounded-2xl outline-none focus:border-blue-500 text-white transition-all">
-            <input type="password" id="reg-pass" placeholder="পাসওয়ার্ড" class="w-full bg-[#0b0f1a] border border-slate-700 p-4 rounded-2xl outline-none focus:border-blue-500 text-white transition-all">
-            
-            <button onclick="handleSignup()" id="sBtn" class="w-full bg-blue-600 hover:bg-blue-700 p-4 rounded-2xl font-bold text-white transition-all transform active:scale-95">
-                একউন্ট খুলুন
-            </button>
-            <p class="text-center mt-4 text-slate-400 text-sm">ইতিমধ্যে একাউন্ট আছে? <a href="login.html" class="text-blue-500 font-bold">লগইন</a></p>
+            <input type="text" id="name" placeholder="নাম" class="w-full p-3 rounded bg-slate-700 outline-none focus:ring-2 ring-blue-500">
+            <input type="email" id="email" placeholder="ইমেইল" class="w-full p-3 rounded bg-slate-700 outline-none focus:ring-2 ring-blue-500">
+            <input type="password" id="pass" placeholder="পাসওয়ার্ড (মিনিমাম ৬ ডিজিট)" class="w-full p-3 rounded bg-slate-700 outline-none focus:ring-2 ring-blue-500">
+            <button onclick="signUp()" id="btn" class="w-full bg-blue-600 p-3 rounded font-bold hover:bg-blue-700">রেজিস্ট্রেশন করুন</button>
         </div>
     </div>
 
     <script>
-        // আমি আপনার স্ক্রিনশট থেকে সব তথ্য এখানে বসিয়ে দিয়েছি
+        // আপনার সঠিক কনফিগারেশন
         const firebaseConfig = {
             apiKey: "AIzaSyBx8hSPYxI34ZTaHs9ScdA8pGz9rO-o-O8",
             authDomain: "panelshop-71ed8.firebaseapp.com",
-            databaseURL: "https://panelshop-71ed8-default-rtdb.firebaseio.com",
             projectId: "panelshop-71ed8",
             storageBucket: "panelshop-71ed8.appspot.com",
             messagingSenderId: "741029675696",
             appId: "1:741029675696:web:86331dc6ab82551d86f175"
         };
-        
-        // ফায়ারবেস চেক
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
+        firebase.initializeApp(firebaseConfig);
 
-        async function handleSignup() {
-            const name = document.getElementById('reg-name').value.trim();
-            const phone = document.getElementById('reg-phone').value.trim();
-            const email = document.getElementById('reg-email').value.trim();
-            const pass = document.getElementById('reg-pass').value.trim();
-            const btn = document.getElementById('sBtn');
+        async function signUp() {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('pass').value;
+            const btn = document.getElementById('btn');
 
-            if(!name || !phone || !email || !pass) return alert("সব তথ্য দিন!");
-            if(pass.length < 6) return alert("পাসওয়ার্ড কমপক্ষে ৬ ডিজিট হতে হবে!");
-
-            btn.disabled = true;
-            btn.innerText = "প্রসেসিং হচ্ছে...";
+            if(!name || !email || !pass) return alert("সব তথ্য দিন!");
+            btn.disabled = true; btn.innerText = "প্রসেসিং...";
 
             try {
                 const res = await firebase.auth().createUserWithEmailAndPassword(email, pass);
                 await firebase.firestore().collection("users").doc(res.user.uid).set({
-                    name: name,
-                    phone: phone,
-                    email: email,
-                    balance: 0,
-                    joinedAt: new Date().toISOString()
+                    name: name, email: email, balance: 0
                 });
-                localStorage.setItem("userId", res.user.uid);
+                alert("সাফল্যের সাথে একাউন্ট তৈরি হয়েছে!");
                 window.location.href = "index.html";
             } catch (err) {
-                alert("এরর: " + err.message);
-                btn.disabled = false;
-                btn.innerText = "একউন্ট খুলুন";
+                alert("ভুল: " + err.message);
+                btn.disabled = false; btn.innerText = "রেজিস্ট্রেশন করুন";
             }
         }
     </script>
